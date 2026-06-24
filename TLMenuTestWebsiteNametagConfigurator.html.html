@@ -141,10 +141,28 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 .btn-add:hover { border-color: var(--acc); color: var(--acc); background: rgba(30, 200, 224, 0.05); }
 
 /* Keyword tags */
-.kw-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.kw-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 20px; font-family: var(--mono); font-size: 11px; color: var(--t1); }
-.kw-tag .rm { cursor: pointer; color: var(--t3); font-size: 14px; line-height: 1; transition: color 0.2s; }
+.kw-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0; }
+.kw-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; background: rgba(255,255,255,0.06); border: 1px solid var(--line2); border-radius: 20px; font-family: var(--mono); font-size: 11px; color: var(--t1); transition: all 0.15s; }
+.kw-tag:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+.kw-tag .rm { cursor: pointer; color: var(--t3); font-size: 13px; line-height: 1; transition: color 0.15s; }
 .kw-tag .rm:hover { color: var(--red); }
+
+/* Role Row Cards */
+.role-row { display: flex; align-items: stretch; gap: 0; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 10px; transition: border-color 0.2s; }
+.role-row:hover { border-color: var(--line2); }
+.role-row-accent { width: 4px; flex-shrink: 0; }
+.role-row-body { flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.role-row-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.role-row-name { font-family: var(--head); font-size: 13px; font-weight: 700; text-transform: capitalize; color: var(--t1); display: flex; align-items: center; gap: 8px; }
+.role-row-name .role-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.role-row-count { font-family: var(--mono); font-size: 10px; color: var(--t3); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 10px; }
+.role-row-keywords { display: flex; flex-wrap: wrap; gap: 6px; }
+.role-row-input { display: flex; gap: 6px; margin-top: 2px; }
+.role-row-input .input-text { flex: 1; padding: 7px 10px; font-size: 11px; }
+.role-row-input .btn-icon { width: 30px; height: 30px; font-size: 16px; background: rgba(30, 200, 224, 0.08); color: var(--acc); border-color: rgba(30, 200, 224, 0.2); }
+.role-row-divider { height: 1px; background: var(--line); margin: 2px 0; }
+.role-row-section-label { font-family: var(--mono); font-size: 10px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.05em; }
+.kw-tag-user { background: rgba(30, 200, 224, 0.08); border-color: rgba(30, 200, 224, 0.25); color: var(--acc); }
 
 /* ── PREVIEW PANEL ── */
 .preview-container { display: flex; flex-direction: column; height: calc(100vh - 64px); position: relative; }
@@ -331,6 +349,9 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
         <h3>Rollen Keywords</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="keywordsBody"></div>
+      <div style="padding: 0 16px 14px; font-size: 11px; color: var(--t3); line-height: 1.5;">
+        Keywords werden mit der Rollen-Beschreibung eines Spielers abgeglichen. Enthält die Rolle eines Spielers eines dieser Keywords, wird das passende Farbschema angewendet. Direkt zugewiesene Usernames haben Vorrang vor Keywords.
+      </div>
     </div>
 
     <div class="ed-section">
@@ -435,16 +456,17 @@ const DEFAULTS = {
     advertising:{ bg:"#1C0E24", avatarBg:"#24122E", avatarText:"#C878FF", divider:"#C878FF", border:"#B464F0", nameText:"#E6AAFF", roleText:"#A050D2", bgGradient:false, bgGradientType:"linear", bgGradientColors:["#1C0E24","#100818"], bgGradientAngle:0 },
     moderator:  { bg:"#221C0A", avatarBg:"#2A220C", avatarText:"#FFC83C", divider:"#FFC83C", border:"#F0B428", nameText:"#FFDC64", roleText:"#DCA01E", bgGradient:false, bgGradientType:"linear", bgGradientColors:["#221C0A","#141006"], bgGradientAngle:0 }
   },
-  layout: { billboardWidth:240, billboardHeight:44, studsOffsetY:3.4, avatarWidth:44, cornerRadius:8, innerCornerRadius:5, borderThickness:1, dividerWidth:1, dividerHeightPct:0.6, dividerTransparency:0.75, nameTextSize:13, nameFont:"GothamBold", roleTextSize:9, roleFont:"GothamBold", initialsTextSize:11, distanceScaleEnabled:true, distanceScaleNear:10, distanceScaleFar:60, distanceScaleMin:0.35 },
+  layout: { billboardWidth:240, billboardHeight:44, studsOffsetY:3.4, avatarWidth:44, cornerRadius:8, innerCornerRadius:5, borderThickness:1, dividerWidth:1, dividerHeightPct:0.6, dividerTransparency:0.75, nameTextSize:13, nameFont:"GothamBold", roleTextSize:9, roleFont:"GothamBold", initialsTextSize:11, avatarTextGap:10, textPaddingRight:4, nameLabelHeight:20, nameLabelY:4, roleLabelHeight:12, roleLabelY:26, roleTextTransform:"upper", avatarImagePadding:3, distanceScaleEnabled:true, distanceScaleNear:10, distanceScaleFar:60, distanceScaleMin:0.35 },
   animations: { fadeInDuration:0.3, fadeInEasing:"Quad", cardTransparency:0.1, borderTransparency:0.7 },
   particles: { enabled:true, count:4, minSize:2, maxSize:4, transparency:0.5, moveDurationMin:3.0, moveDurationMax:5.0, colors:["#B87CFF","#A064F0","#C896FF","#8C50DC","#DDB8FF"] },
   roleKeywords: { owner:["owner","vip"], developer:["developer","entwickler"], moderator:["moderator","mod"], admin:["admin","administrator"], advertising:["advertising","werbung"] },
+  roleUsers: { owner:[], admin:[], developer:[], moderator:[], advertising:[], user:[] },
   gradients: {
-    cardGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#1A1A22"], transparency:[0,0], rotation:90, offset:[0,0], size:[1,1] },
-    avatarGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#160E1E"], transparency:[0,0], rotation:180, offset:[0,0], size:[1,1] },
-    nameGradient:    { enabled:false, type:"Linear", colors:["#FFFFFF","#B87CFF"], transparency:[0,0], rotation:0, offset:[0,0], size:[1,1] },
-    roleGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#8850CC"], transparency:[0,0], rotation:0, offset:[0,0], size:[1,1] },
-    borderGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#AA64FF"], transparency:[0,0], rotation:0, offset:[0,0], size:[1,1] }
+    cardGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#1A1A22"], transparency:[0,0], rotation:90, offset:[0,0] },
+    avatarGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#160E1E"], transparency:[0,0], rotation:180, offset:[0,0] },
+    nameGradient:    { enabled:false, type:"Linear", colors:["#FFFFFF","#B87CFF"], transparency:[0,0], rotation:0, offset:[0,0] },
+    roleGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#8850CC"], transparency:[0,0], rotation:0, offset:[0,0] },
+    borderGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#AA64FF"], transparency:[0,0], rotation:0, offset:[0,0] }
   },
   profilePictures: {
     owner:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-telelumi.png", file:"assets/TL-telelumi.png" },
@@ -626,7 +648,14 @@ function buildLayout() {
     ["dividerHeightPct","Trennstrich Höhe (%)",0,1,0.05], ["dividerTransparency","Trennstrich Transparenz",0,1,0.05],
     ["nameTextSize","Name Schriftgröße",6,24,1],
     ["roleTextSize","Rollen Schriftgröße",6,18,1],
-    ["initialsTextSize","Initialen Schriftgröße",6,18,1]
+    ["initialsTextSize","Initialen Schriftgröße",6,18,1],
+    ["avatarTextGap","Avatar-Text Abstand (px)",0,30,1],
+    ["textPaddingRight","Text Rechts-Padding (px)",0,20,1],
+    ["nameLabelHeight","Name Höhe (px)",8,40,1],
+    ["nameLabelY","Name Y-Position (px)",0,20,1],
+    ["roleLabelHeight","Rolle Höhe (px)",8,30,1],
+    ["roleLabelY","Rolle Y-Position (px)",0,40,1],
+    ["avatarImagePadding","Avatar Bild Inset (px)",0,10,1]
   ];
   const c = document.getElementById("layoutBody");
   c.innerHTML = sliders.map(([key,label,min,max,step]) => `
@@ -648,6 +677,14 @@ function buildLayout() {
       <label class="field-label">Rollen Schriftart</label>
       <select onchange="config.layout.roleFont=this.value; updatePreview()">
         ${FONT_OPTIONS.map(f => `<option ${l.roleFont===f?'selected':''}>${f}</option>`).join("")}
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-label">Rollen Text-Stil</label>
+      <select onchange="config.layout.roleTextTransform=this.value; updatePreview()">
+        <option value="upper" ${l.roleTextTransform==='upper'?'selected':''}>Großbuchstaben (UPPER)</option>
+        <option value="lower" ${l.roleTextTransform==='lower'?'selected':''}>Kleinbuchstaben (lower)</option>
+        <option value="none" ${l.roleTextTransform==='none'?'selected':''}>Original (Name)</option>
       </select>
     </div>
     <div style="border-top:1px solid var(--line); padding-top:16px; margin-top:8px;">
@@ -730,21 +767,52 @@ function buildParticleColors() {
   `).join("") + `<button class="btn-add" onclick="config.particles.colors.push('#FFFFFF'); buildParticleColors(); updatePreview()">+ Farbe hinzufügen</button>`;
 }
 
-// ── KEYWORDS ──
+// ── KEYWORDS + ROLE USERS ──
+const ROLE_COLORS = { user:"#64B4FF", admin:"#FF6464", owner:"#B87CFF", developer:"#50A0F0", advertising:"#C878FF", moderator:"#FFC83C" };
+
 function buildKeywords() {
-  document.getElementById("keywordsBody").innerHTML = THEME_NAMES.map(t => `
-    <div class="field">
-      <label class="field-label">${t}</label>
-      <div class="field-row">
-        <input type="text" class="input-text" id="kwInput_${t}" placeholder="Keyword (z.B. admin)" onkeydown="if(event.key==='Enter'){addKeyword('${t}')}">
-        <button class="btn btn-secondary" style="padding: 10px 14px" onclick="addKeyword('${t}')">+</button>
+  const c = document.getElementById("keywordsBody");
+  c.innerHTML = THEME_NAMES.map(t => {
+    const kws = config.roleKeywords[t] || [];
+    const users = config.roleUsers[t] || [];
+    const color = ROLE_COLORS[t] || "#888";
+    return `
+    <div class="role-row">
+      <div class="role-row-accent" style="background: ${color};"></div>
+      <div class="role-row-body">
+        <div class="role-row-header">
+          <div class="role-row-name">
+            <span class="role-dot" style="background: ${color};"></span>
+            ${t}
+          </div>
+          <span class="role-row-count">${kws.length} Keyword${kws.length !== 1 ? 's' : ''} · ${users.length} User</span>
+        </div>
+        <div class="role-row-keywords">
+          ${kws.map((kw,i) => `<span class="kw-tag">${kw} <span class="rm" onclick="removeKeyword('${t}',${i})">×</span></span>`).join("")}
+          ${kws.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">Keine Keywords</span>' : ''}
+        </div>
+        <div class="role-row-input">
+          <input type="text" class="input-text" id="kwInput_${t}" placeholder="Keyword hinzufügen..." onkeydown="if(event.key==='Enter'){addKeyword('${t}')}">
+          <button class="btn-icon" onclick="addKeyword('${t}')">+</button>
+        </div>
+        <div class="role-row-divider"></div>
+        <div class="role-row-section-label">Direkt zugewiesene Usernames</div>
+        <div class="role-row-keywords">
+          ${users.map((u,i) => `<span class="kw-tag kw-tag-user">${u} <span class="rm" onclick="removeUsername('${t}',${i})">×</span></span>`).join("")}
+          ${users.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">Keine User zugewiesen</span>' : ''}
+        </div>
+        <div class="role-row-input">
+          <input type="text" class="input-text" id="usrInput_${t}" placeholder="Roblox Username hinzufügen..." onkeydown="if(event.key==='Enter'){addUsername('${t}')}">
+          <button class="btn-icon" onclick="addUsername('${t}')">+</button>
+        </div>
       </div>
-      <div class="kw-tags" id="kwTags_${t}">${(config.roleKeywords[t]||[]).map((kw,i) => `<span class="kw-tag">${kw} <span class="rm" onclick="removeKeyword('${t}',${i})">×</span></span>`).join("")}</div>
-    </div>
-  `).join("");
+    </div>`;
+  }).join("");
 }
 function addKeyword(theme) { const val = document.getElementById("kwInput_"+theme).value.trim().toLowerCase(); if(!val) return; if(!config.roleKeywords[theme]) config.roleKeywords[theme]=[]; if(!config.roleKeywords[theme].includes(val)) config.roleKeywords[theme].push(val); document.getElementById("kwInput_"+theme).value=""; buildKeywords(); }
 function removeKeyword(theme, idx) { config.roleKeywords[theme].splice(idx, 1); buildKeywords(); }
+function addUsername(theme) { const val = document.getElementById("usrInput_"+theme).value.trim(); if(!val) return; if(!config.roleUsers[theme]) config.roleUsers[theme]=[]; if(!config.roleUsers[theme].includes(val)) config.roleUsers[theme].push(val); document.getElementById("usrInput_"+theme).value=""; buildKeywords(); }
+function removeUsername(theme, idx) { config.roleUsers[theme].splice(idx, 1); buildKeywords(); }
 
 // ── PROFILE PICTURES (DYNAMIC FIX) ──
 function buildProfilePictures() {
@@ -809,9 +877,9 @@ let activeGradTarget = "cardGradient";
 function buildGradients() {
   if (!config.gradients) {
     config.gradients = {};
-    GRAD_TARGETS.forEach(t => { config.gradients[t.key] = JSON.parse(JSON.stringify(DEFAULTS.gradients[t.key] || {enabled:false,type:"Linear",colors:["#B87CFF","#1A1A22"],transparency:[0,0],rotation:90,offset:[0,0],size:[1,1]})); });
+    GRAD_TARGETS.forEach(t => { config.gradients[t.key] = JSON.parse(JSON.stringify(DEFAULTS.gradients[t.key] || {enabled:false,type:"Linear",colors:["#B87CFF","#1A1A22"],transparency:[0,0],rotation:90,offset:[0,0]})); });
   }
-  GRAD_TARGETS.forEach(t => { if (!config.gradients[t.key]) config.gradients[t.key] = JSON.parse(JSON.stringify(DEFAULTS.gradients[t.key] || {enabled:false,type:"Linear",colors:["#B87CFF","#1A1A22"],transparency:[0,0],rotation:90,offset:[0,0],size:[1,1]})); });
+  GRAD_TARGETS.forEach(t => { if (!config.gradients[t.key]) config.gradients[t.key] = JSON.parse(JSON.stringify(DEFAULTS.gradients[t.key] || {enabled:false,type:"Linear",colors:["#B87CFF","#1A1A22"],transparency:[0,0],rotation:90,offset:[0,0]})); });
 
   const c = document.getElementById("gradientBody");
   const tabs = GRAD_TARGETS.map(t => `<div class="theme-tab ${t.key===activeGradTarget?'active':''}" onclick="activeGradTarget='${t.key}'; buildGradients()">${t.label}</div>`).join("");
@@ -836,8 +904,6 @@ function buildGradients() {
 
   html += `<div class="field"><label class="field-label">Offset X</label><div class="slider-wrap"><input type="range" min="-1" max="1" step="0.05" value="${(g.offset||[0,0])[0]}" oninput="config.gradients['${activeGradTarget}'].offset=[parseFloat(this.value),(config.gradients['${activeGradTarget}'].offset||[0,0])[1]]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.offset||[0,0])[0]}</span></div></div>`;
   html += `<div class="field"><label class="field-label">Offset Y</label><div class="slider-wrap"><input type="range" min="-1" max="1" step="0.05" value="${(g.offset||[0,0])[1]}" oninput="config.gradients['${activeGradTarget}'].offset=[(config.gradients['${activeGradTarget}'].offset||[0,0])[0],parseFloat(this.value)]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.offset||[0,0])[1]}</span></div></div>`;
-  html += `<div class="field"><label class="field-label">Size X</label><div class="slider-wrap"><input type="range" min="0.1" max="3" step="0.1" value="${(g.size||[1,1])[0]}" oninput="config.gradients['${activeGradTarget}'].size=[parseFloat(this.value),(config.gradients['${activeGradTarget}'].size||[1,1])[1]]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.size||[1,1])[0]}</span></div></div>`;
-  html += `<div class="field"><label class="field-label">Size Y</label><div class="slider-wrap"><input type="range" min="0.1" max="3" step="0.1" value="${(g.size||[1,1])[1]}" oninput="config.gradients['${activeGradTarget}'].size=[(config.gradients['${activeGradTarget}'].size||[1,1])[0],parseFloat(this.value)]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.size||[1,1])[1]}</span></div></div>`;
 
   c.innerHTML = html;
 }
@@ -864,18 +930,11 @@ function updatePreview() {
   preview.style.filter = "";
   preview.style.backgroundBlendMode = "";
   if (t.bgGradient) {
-    const typeDef = GRADIENT_TYPES[t.bgGradientType] || GRADIENT_TYPES.linear;
     preview.style.background = renderGradientCss(t);
-    preview.style.filter = typeDef.glow ? "saturate(1.3) brightness(1.05) drop-shadow(0 0 6px rgba(255,255,255,0.15))"
-                          : typeDef.metallic ? "saturate(0.85) contrast(1.15) brightness(1.05)"
-                          : typeDef.shimmer ? "saturate(1.4) contrast(1.05)"
-                          : typeDef.soft ? "saturate(0.9) blur(0.2px)"
-                          : typeDef.glass ? "saturate(1.1) brightness(1.08)"
-                          : "";
-    preview.style.backgroundBlendMode = typeDef.glow || typeDef.shimmer ? "screen" : typeDef.glass ? "lighten" : "normal";
   } else {
     preview.style.background = t.bg;
   }
+  preview.style.opacity = 1 - a.cardTransparency;
 
   const border = document.getElementById("ntBorder");
   border.style.border = l.borderThickness + "px solid " + t.border;
@@ -901,12 +960,26 @@ function updatePreview() {
   const nameEl = document.getElementById("ntNameDisplay");
   nameEl.style.fontSize = l.nameTextSize + "px";
   nameEl.style.color = t.nameText;
+  nameEl.style.height = (l.nameLabelHeight || 20) + "px";
+  nameEl.style.lineHeight = (l.nameLabelHeight || 20) + "px";
+  nameEl.style.paddingTop = (l.nameLabelY || 4) + "px";
+  nameEl.style.paddingLeft = ((l.avatarWidth || 44) + (l.avatarTextGap || 10)) + "px";
+  nameEl.style.paddingRight = (l.textPaddingRight || 4) + "px";
   nameEl.textContent = dynName;
 
   const roleEl = document.getElementById("ntRoleDisplay");
   roleEl.style.fontSize = l.roleTextSize + "px";
   roleEl.style.color = t.roleText;
-  roleEl.textContent = dynRole;
+  roleEl.style.height = (l.roleLabelHeight || 12) + "px";
+  roleEl.style.lineHeight = (l.roleLabelHeight || 12) + "px";
+  roleEl.style.paddingTop = ((l.roleLabelY || 26) - (l.nameLabelY || 4) - (l.nameLabelHeight || 20)) + "px";
+  roleEl.style.paddingLeft = ((l.avatarWidth || 44) + (l.avatarTextGap || 10)) + "px";
+  roleEl.style.paddingRight = (l.textPaddingRight || 4) + "px";
+  const roleTextTransform = l.roleTextTransform || "upper";
+  if (roleTextTransform === "upper") roleEl.textContent = dynRole.toUpperCase();
+  else if (roleTextTransform === "lower") roleEl.textContent = dynRole.toLowerCase();
+  else roleEl.textContent = dynRole;
+  roleEl.style.textTransform = roleTextTransform === "none" ? "none" : roleTextTransform === "lower" ? "lowercase" : "uppercase";
 
   // Dynamische Partikel (Fix: gilt jetzt für das aktuelle Theme, nicht nur "owner")
   const pCont = document.getElementById("ntParticles");
