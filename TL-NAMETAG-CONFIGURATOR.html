@@ -321,6 +321,13 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 
     <div class="ed-section">
       <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Gradients</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="gradientBody"></div>
+    </div>
+
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
         <h3>Rollen Keywords</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="keywordsBody"></div>
@@ -428,10 +435,17 @@ const DEFAULTS = {
     advertising:{ bg:"#1C0E24", avatarBg:"#24122E", avatarText:"#C878FF", divider:"#C878FF", border:"#B464F0", nameText:"#E6AAFF", roleText:"#A050D2", bgGradient:false, bgGradientType:"linear", bgGradientColors:["#1C0E24","#100818"], bgGradientAngle:0 },
     moderator:  { bg:"#221C0A", avatarBg:"#2A220C", avatarText:"#FFC83C", divider:"#FFC83C", border:"#F0B428", nameText:"#FFDC64", roleText:"#DCA01E", bgGradient:false, bgGradientType:"linear", bgGradientColors:["#221C0A","#141006"], bgGradientAngle:0 }
   },
-  layout: { billboardWidth:240, billboardHeight:44, studsOffsetY:3.4, avatarWidth:44, cornerRadius:8, innerCornerRadius:5, borderThickness:1, dividerWidth:1, dividerHeightPct:0.6, dividerTransparency:0.75, nameTextSize:13, nameFont:"GothamBold", roleTextSize:9, roleFont:"GothamBold", initialsTextSize:11 },
+  layout: { billboardWidth:240, billboardHeight:44, studsOffsetY:3.4, avatarWidth:44, cornerRadius:8, innerCornerRadius:5, borderThickness:1, dividerWidth:1, dividerHeightPct:0.6, dividerTransparency:0.75, nameTextSize:13, nameFont:"GothamBold", roleTextSize:9, roleFont:"GothamBold", initialsTextSize:11, distanceScaleEnabled:true, distanceScaleNear:10, distanceScaleFar:60, distanceScaleMin:0.35 },
   animations: { fadeInDuration:0.3, fadeInEasing:"Quad", cardTransparency:0.1, borderTransparency:0.7 },
   particles: { enabled:true, count:4, minSize:2, maxSize:4, transparency:0.5, moveDurationMin:3.0, moveDurationMax:5.0, colors:["#B87CFF","#A064F0","#C896FF","#8C50DC","#DDB8FF"] },
   roleKeywords: { owner:["owner","vip"], developer:["developer","entwickler"], moderator:["moderator","mod"], admin:["admin","administrator"], advertising:["advertising","werbung"] },
+  gradients: {
+    cardGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#1A1A22"], transparency:[0,0], rotation:90, offset:[0,0], size:[1,1] },
+    avatarGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#160E1E"], transparency:[0,0], rotation:180, offset:[0,0], size:[1,1] },
+    nameGradient:    { enabled:false, type:"Linear", colors:["#FFFFFF","#B87CFF"], transparency:[0,0], rotation:0, offset:[0,0], size:[1,1] },
+    roleGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#8850CC"], transparency:[0,0], rotation:0, offset:[0,0], size:[1,1] },
+    borderGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#AA64FF"], transparency:[0,0], rotation:0, offset:[0,0], size:[1,1] }
+  },
   profilePictures: {
     owner:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-telelumi.png", file:"assets/TL-telelumi.png" },
     user:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TLUSER-ROLE.png", file:"assets/TLUSER-ROLE.png" }
@@ -502,7 +516,7 @@ function init() {
   document.getElementById("targetUserInp").value = config.targetUser || "";
   buildThemeTabs(); buildColorGrid(); buildLayout(); buildAnimation();
   buildParticles(); buildKeywords(); buildProfilePictures(); buildAvatars();
-  buildPreviewThemeBtns(); updatePreview();
+  buildGradients(); buildPreviewThemeBtns(); updatePreview();
 }
 
 function toggleSection(el) { el.classList.toggle("open"); el.nextElementSibling.classList.toggle("open"); }
@@ -605,10 +619,14 @@ function buildLayout() {
   const l = config.layout;
   const sliders = [
     ["billboardWidth","Gesamtbreite (px)",50,400,1], ["billboardHeight","Gesamthöhe (px)",20,100,1],
+    ["studsOffsetY","Y-Offset (Studs)",0,10,0.1],
     ["avatarWidth","Avatar Breite (px)",20,80,1], ["cornerRadius","Ecken-Radius",0,20,1],
+    ["innerCornerRadius","Innerer Ecken-Radius",0,20,1],
     ["borderThickness","Rahmendicke",0,5,0.5], ["dividerWidth","Trennstrich Breite",0,5,1],
-    ["dividerHeightPct","Trennstrich Höhe (%)",0,1,0.05], ["nameTextSize","Name Schriftgröße",6,24,1],
-    ["roleTextSize","Rollen Schriftgröße",6,18,1]
+    ["dividerHeightPct","Trennstrich Höhe (%)",0,1,0.05], ["dividerTransparency","Trennstrich Transparenz",0,1,0.05],
+    ["nameTextSize","Name Schriftgröße",6,24,1],
+    ["roleTextSize","Rollen Schriftgröße",6,18,1],
+    ["initialsTextSize","Initialen Schriftgröße",6,18,1]
   ];
   const c = document.getElementById("layoutBody");
   c.innerHTML = sliders.map(([key,label,min,max,step]) => `
@@ -626,6 +644,23 @@ function buildLayout() {
         ${FONT_OPTIONS.map(f => `<option ${l.nameFont===f?'selected':''}>${f}</option>`).join("")}
       </select>
     </div>
+    <div class="field">
+      <label class="field-label">Rollen Schriftart</label>
+      <select onchange="config.layout.roleFont=this.value; updatePreview()">
+        ${FONT_OPTIONS.map(f => `<option ${l.roleFont===f?'selected':''}>${f}</option>`).join("")}
+      </select>
+    </div>
+    <div style="border-top:1px solid var(--line); padding-top:16px; margin-top:8px;">
+      <div class="toggle-wrap">
+        <span class="toggle-label">Distance Scaling</span>
+        <div class="toggle ${l.distanceScaleEnabled?'on':''}" onclick="config.layout.distanceScaleEnabled=!config.layout.distanceScaleEnabled; toggleSwitch(this); updatePreview()"><div class="toggle-knob"></div></div>
+      </div>
+      ${l.distanceScaleEnabled ? `
+        <div class="field"><label class="field-label">Near (Studs)</label><div class="slider-wrap"><input type="range" min="1" max="50" step="1" value="${l.distanceScaleNear}" oninput="config.layout.distanceScaleNear=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${l.distanceScaleNear}</span></div></div>
+        <div class="field"><label class="field-label">Far (Studs)</label><div class="slider-wrap"><input type="range" min="20" max="200" step="1" value="${l.distanceScaleFar}" oninput="config.layout.distanceScaleFar=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${l.distanceScaleFar}</span></div></div>
+        <div class="field"><label class="field-label">Min Scale</label><div class="slider-wrap"><input type="range" min="0.1" max="1" step="0.05" value="${l.distanceScaleMin}" oninput="config.layout.distanceScaleMin=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${l.distanceScaleMin}</span></div></div>
+      ` : ''}
+    </div>
   `;
 }
 
@@ -641,10 +676,23 @@ function buildAnimation() {
       </div>
     </div>
     <div class="field">
+      <label class="field-label">Fade-In Easing</label>
+      <select onchange="config.animations.fadeInEasing=this.value; updatePreview()">
+        ${EASING_OPTIONS.map(e => `<option ${a.fadeInEasing===e?'selected':''}>${e}</option>`).join("")}
+      </select>
+    </div>
+    <div class="field">
       <label class="field-label">Karten-Transparenz</label>
       <div class="slider-wrap">
         <input type="range" min="0" max="1" step="0.05" value="${a.cardTransparency}" oninput="config.animations.cardTransparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
         <span class="slider-val">${a.cardTransparency}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Rahmen-Transparenz</label>
+      <div class="slider-wrap">
+        <input type="range" min="0" max="1" step="0.05" value="${a.borderTransparency}" oninput="config.animations.borderTransparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${a.borderTransparency}</span>
       </div>
     </div>
   `;
@@ -660,7 +708,11 @@ function buildParticles() {
       <div class="toggle ${p.enabled?'on':''}" onclick="config.particles.enabled=!config.particles.enabled; toggleSwitch(this); updatePreview()"><div class="toggle-knob"></div></div>
     </div>
     <div class="field"><label class="field-label">Anzahl</label><div class="slider-wrap"><input type="range" min="0" max="12" step="1" value="${p.count}" oninput="config.particles.count=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.count}</span></div></div>
+    <div class="field"><label class="field-label">Min Größe (px)</label><div class="slider-wrap"><input type="range" min="1" max="10" step="1" value="${p.minSize}" oninput="config.particles.minSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.minSize}</span></div></div>
     <div class="field"><label class="field-label">Max Größe (px)</label><div class="slider-wrap"><input type="range" min="1" max="20" step="1" value="${p.maxSize}" oninput="config.particles.maxSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.maxSize}</span></div></div>
+    <div class="field"><label class="field-label">Transparenz</label><div class="slider-wrap"><input type="range" min="0" max="1" step="0.05" value="${p.transparency}" oninput="config.particles.transparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.transparency}</span></div></div>
+    <div class="field"><label class="field-label">Bewegung Min (Sek)</label><div class="slider-wrap"><input type="range" min="0.5" max="10" step="0.5" value="${p.moveDurationMin}" oninput="config.particles.moveDurationMin=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()"><span class="slider-val">${p.moveDurationMin}s</span></div></div>
+    <div class="field"><label class="field-label">Bewegung Max (Sek)</label><div class="slider-wrap"><input type="range" min="1" max="15" step="0.5" value="${p.moveDurationMax}" oninput="config.particles.moveDurationMax=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()"><span class="slider-val">${p.moveDurationMax}s</span></div></div>
     <div class="field"><label class="field-label">Farben</label><div id="particleColors"></div></div>
   `;
   buildParticleColors();
@@ -742,6 +794,52 @@ function syncAvatarsFromDOM() {
     newAvatars[name] = { url: row.querySelector(".av-url")?.value||"", file: row.querySelector(".av-file")?.value||"", strokeStart:"#FFFFFF", strokeEnd:"#000000" };
   });
   config.customAvatars = newAvatars;
+}
+
+// ── GRADIENTS ──
+const GRAD_TARGETS = [
+  { key:"cardGradient",   label:"Card Gradient" },
+  { key:"avatarGradient", label:"Avatar Gradient" },
+  { key:"nameGradient",   label:"Name Gradient" },
+  { key:"roleGradient",   label:"Role Gradient" },
+  { key:"borderGradient", label:"Border Gradient" }
+];
+let activeGradTarget = "cardGradient";
+
+function buildGradients() {
+  if (!config.gradients) {
+    config.gradients = {};
+    GRAD_TARGETS.forEach(t => { config.gradients[t.key] = JSON.parse(JSON.stringify(DEFAULTS.gradients[t.key] || {enabled:false,type:"Linear",colors:["#B87CFF","#1A1A22"],transparency:[0,0],rotation:90,offset:[0,0],size:[1,1]})); });
+  }
+  GRAD_TARGETS.forEach(t => { if (!config.gradients[t.key]) config.gradients[t.key] = JSON.parse(JSON.stringify(DEFAULTS.gradients[t.key] || {enabled:false,type:"Linear",colors:["#B87CFF","#1A1A22"],transparency:[0,0],rotation:90,offset:[0,0],size:[1,1]})); });
+
+  const c = document.getElementById("gradientBody");
+  const tabs = GRAD_TARGETS.map(t => `<div class="theme-tab ${t.key===activeGradTarget?'active':''}" onclick="activeGradTarget='${t.key}'; buildGradients()">${t.label}</div>`).join("");
+  const g = config.gradients[activeGradTarget];
+
+  let html = `<div class="theme-tabs">${tabs}</div>`;
+  html += `<div class="toggle-wrap"><span class="toggle-label">Enabled</span><div class="toggle ${g.enabled?'on':''}" onclick="config.gradients['${activeGradTarget}'].enabled=!config.gradients['${activeGradTarget}'].enabled; toggleSwitch(this); buildGradients(); updatePreview()"><div class="toggle-knob"></div></div></div>`;
+  html += `<div class="field"><label class="field-label">Type</label><select onchange="config.gradients['${activeGradTarget}'].type=this.value; updatePreview()">`;
+  GRADIENT_TYPE_KEYS.forEach(k => { html += `<option value="${k}" ${g.type===k||g.type===k.charAt(0).toUpperCase()+k.slice(1)?'selected':''}>${GRADIENT_TYPES[k].label}</option>`; });
+  html += `</select></div>`;
+
+  html += `<div class="field"><label class="field-label">Rotation (deg)</label><div class="slider-wrap"><input type="range" min="0" max="360" step="1" value="${g.rotation||0}" oninput="config.gradients['${activeGradTarget}'].rotation=parseInt(this.value); this.nextElementSibling.textContent=this.value+'°'; updatePreview()"><span class="slider-val">${g.rotation||0}°</span></div></div>`;
+
+  (g.colors||[]).forEach((col, i) => {
+    html += `<div class="field"><label class="field-label">Color ${i+1}</label><div class="color-pick"><input type="color" value="${col}" onchange="config.gradients['${activeGradTarget}'].colors[${i}]=this.value; this.nextElementSibling.value=this.value; updatePreview()"><input type="text" class="hex" value="${col}" onchange="config.gradients['${activeGradTarget}'].colors[${i}]=this.value; this.previousElementSibling.value=this.value; updatePreview()"></div></div>`;
+  });
+  if ((g.colors||[]).length < 4) html += `<button class="btn-add" onclick="config.gradients['${activeGradTarget}'].colors.push(config.gradients['${activeGradTarget}'].colors[config.gradients['${activeGradTarget}'].colors.length-1]||'#FFFFFF'); buildGradients()">+ Color</button>`;
+
+  (g.transparency||[]).forEach((tr, i) => {
+    html += `<div class="field"><label class="field-label">Transparency ${i+1}</label><div class="slider-wrap"><input type="range" min="0" max="1" step="0.05" value="${tr}" oninput="config.gradients['${activeGradTarget}'].transparency[${i}]=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${tr}</span></div></div>`;
+  });
+
+  html += `<div class="field"><label class="field-label">Offset X</label><div class="slider-wrap"><input type="range" min="-1" max="1" step="0.05" value="${(g.offset||[0,0])[0]}" oninput="config.gradients['${activeGradTarget}'].offset=[parseFloat(this.value),(config.gradients['${activeGradTarget}'].offset||[0,0])[1]]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.offset||[0,0])[0]}</span></div></div>`;
+  html += `<div class="field"><label class="field-label">Offset Y</label><div class="slider-wrap"><input type="range" min="-1" max="1" step="0.05" value="${(g.offset||[0,0])[1]}" oninput="config.gradients['${activeGradTarget}'].offset=[(config.gradients['${activeGradTarget}'].offset||[0,0])[0],parseFloat(this.value)]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.offset||[0,0])[1]}</span></div></div>`;
+  html += `<div class="field"><label class="field-label">Size X</label><div class="slider-wrap"><input type="range" min="0.1" max="3" step="0.1" value="${(g.size||[1,1])[0]}" oninput="config.gradients['${activeGradTarget}'].size=[parseFloat(this.value),(config.gradients['${activeGradTarget}'].size||[1,1])[1]]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.size||[1,1])[0]}</span></div></div>`;
+  html += `<div class="field"><label class="field-label">Size Y</label><div class="slider-wrap"><input type="range" min="0.1" max="3" step="0.1" value="${(g.size||[1,1])[1]}" oninput="config.gradients['${activeGradTarget}'].size=[(config.gradients['${activeGradTarget}'].size||[1,1])[0],parseFloat(this.value)]; this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${(g.size||[1,1])[1]}</span></div></div>`;
+
+  c.innerHTML = html;
 }
 
 // ── PREVIEW THEME BTNS ──
