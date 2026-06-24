@@ -42,13 +42,13 @@
       "avatarText": "#B87CFF",
       "divider": "#B87CFF",
       "border": "#AA64FF",
-      "nameText": "#DDB8FF",
-      "roleText": "#8850CC",
-      "bgGradient": false,
+      "nameText": "#ffffff",
+      "roleText": "#ffffff",
+      "bgGradient": true,
       "bgGradientType": "linear",
       "bgGradientColors": [
-        "#160E1E",
-        "#0D0814"
+        "#21f2a2",
+        "#2684e8"
       ],
       "bgGradientAngle": 0
     },
@@ -102,7 +102,7 @@
     }
   },
   "layout": {
-    "billboardWidth": 181,
+    "billboardWidth": 200,
     "billboardHeight": 45,
     "studsOffsetY": 2,
     "avatarWidth": 44,
@@ -168,7 +168,7 @@
   },
   "gradients": {
     "cardGradient": {
-      "enabled": false,
+      "enabled": true,
       "type": "Linear",
       "colors": [
         "#B87CFF",
