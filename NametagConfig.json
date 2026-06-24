@@ -10,11 +10,15 @@
       "divider": "#A0A0C0",
       "border": "#A0A0B4",
       "nameText": "#E6E6F0",
-      "roleText": "#7878A0",
-      "bgGradient": false,
-      "bgGradientStart": "#1A1A22",
-      "bgGradientEnd": "#0E0E18",
-      "bgGradientRotation": 0
+      "roleText": "#ffffff",
+      "bgGradient": true,
+      "bgGradientType": "linear",
+      "bgGradientColors": [
+        "#26e8d4",
+        "#396aee",
+        "#62eea5"
+      ],
+      "bgGradientAngle": 119
     },
     "admin": {
       "bg": "#220E0E",
@@ -25,9 +29,12 @@
       "nameText": "#FF8C8C",
       "roleText": "#C83C3C",
       "bgGradient": false,
-      "bgGradientStart": "#220E0E",
-      "bgGradientEnd": "#150808",
-      "bgGradientRotation": 0
+      "bgGradientType": "linear",
+      "bgGradientColors": [
+        "#220E0E",
+        "#150808"
+      ],
+      "bgGradientAngle": 0
     },
     "owner": {
       "bg": "#160E1E",
@@ -38,9 +45,12 @@
       "nameText": "#DDB8FF",
       "roleText": "#8850CC",
       "bgGradient": false,
-      "bgGradientStart": "#160E1E",
-      "bgGradientEnd": "#0D0814",
-      "bgGradientRotation": 0
+      "bgGradientType": "linear",
+      "bgGradientColors": [
+        "#160E1E",
+        "#0D0814"
+      ],
+      "bgGradientAngle": 0
     },
     "developer": {
       "bg": "#0C1428",
@@ -51,9 +61,12 @@
       "nameText": "#8CD2FF",
       "roleText": "#3C82DC",
       "bgGradient": false,
-      "bgGradientStart": "#0C1428",
-      "bgGradientEnd": "#060A18",
-      "bgGradientRotation": 0
+      "bgGradientType": "linear",
+      "bgGradientColors": [
+        "#0C1428",
+        "#060A18"
+      ],
+      "bgGradientAngle": 0
     },
     "advertising": {
       "bg": "#1C0E24",
@@ -64,9 +77,12 @@
       "nameText": "#E6AAFF",
       "roleText": "#A050D2",
       "bgGradient": false,
-      "bgGradientStart": "#1C0E24",
-      "bgGradientEnd": "#100818",
-      "bgGradientRotation": 0
+      "bgGradientType": "linear",
+      "bgGradientColors": [
+        "#1C0E24",
+        "#100818"
+      ],
+      "bgGradientAngle": 0
     },
     "moderator": {
       "bg": "#221C0A",
@@ -77,9 +93,12 @@
       "nameText": "#FFDC64",
       "roleText": "#DCA01E",
       "bgGradient": false,
-      "bgGradientStart": "#221C0A",
-      "bgGradientEnd": "#141006",
-      "bgGradientRotation": 0
+      "bgGradientType": "linear",
+      "bgGradientColors": [
+        "#221C0A",
+        "#141006"
+      ],
+      "bgGradientAngle": 0
     }
   },
   "layout": {
@@ -154,12 +173,6 @@
     }
   },
   "customAvatars": {
-    "usxirr": {
-      "url": "https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-Oso.png",
-      "file": "assets/TL-Usxirr.png",
-      "strokeStart": "#FFFFFF",
-      "strokeEnd": "#000000"
-    },
     "Ridgezruby13": {
       "url": "https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-STAFF.png",
       "file": "",
