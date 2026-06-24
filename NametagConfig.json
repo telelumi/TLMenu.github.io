@@ -4,21 +4,21 @@
   "targetUser": "Ridgezruby13",
   "themes": {
     "user": {
-      "bg": "#000000",
-      "avatarBg": "#000000",
+      "bg": "#1A1A22",
+      "avatarBg": "#1F1F2C",
       "avatarText": "#A0A0C0",
       "divider": "#A0A0C0",
-      "border": "#a600ff",
+      "border": "#A0A0B4",
       "nameText": "#E6E6F0",
       "roleText": "#ffffff",
       "bgGradient": true,
-      "bgGradientType": "colorblend",
+      "bgGradientType": "linear",
       "bgGradientColors": [
-        "#21f2a2",
-        "#2684e8",
-        "#0affb6"
+        "#26e8d4",
+        "#396aee",
+        "#62eea5"
       ],
-      "bgGradientAngle": 150
+      "bgGradientAngle": 119
     },
     "admin": {
       "bg": "#220E0E",
@@ -42,13 +42,13 @@
       "avatarText": "#B87CFF",
       "divider": "#B87CFF",
       "border": "#AA64FF",
-      "nameText": "#ffffff",
-      "roleText": "#ffffff",
-      "bgGradient": true,
+      "nameText": "#DDB8FF",
+      "roleText": "#8850CC",
+      "bgGradient": false,
       "bgGradientType": "linear",
       "bgGradientColors": [
-        "#21f2a2",
-        "#2684e8"
+        "#160E1E",
+        "#0D0814"
       ],
       "bgGradientAngle": 0
     },
@@ -102,9 +102,9 @@
     }
   },
   "layout": {
-    "billboardWidth": 200,
-    "billboardHeight": 45,
-    "studsOffsetY": 2,
+    "billboardWidth": 240,
+    "billboardHeight": 44,
+    "studsOffsetY": 3.4,
     "avatarWidth": 44,
     "cornerRadius": 8,
     "innerCornerRadius": 5,
@@ -117,6 +117,14 @@
     "roleTextSize": 9,
     "roleFont": "GothamBold",
     "initialsTextSize": 11,
+    "avatarTextGap": 10,
+    "textPaddingRight": 4,
+    "nameLabelHeight": 20,
+    "nameLabelY": 4,
+    "roleLabelHeight": 12,
+    "roleLabelY": 26,
+    "roleTextTransform": "upper",
+    "avatarImagePadding": 3,
     "distanceScaleEnabled": true,
     "distanceScaleNear": 10,
     "distanceScaleFar": 60,
@@ -166,113 +174,6 @@
       "werbung"
     ]
   },
-  "gradients": {
-    "cardGradient": {
-      "enabled": true,
-      "type": "Linear",
-      "colors": [
-        "#B87CFF",
-        "#1A1A22"
-      ],
-      "transparency": [
-        0,
-        0
-      ],
-      "rotation": 90,
-      "offset": [
-        0,
-        0
-      ],
-      "size": [
-        1,
-        1
-      ]
-    },
-    "avatarGradient": {
-      "enabled": false,
-      "type": "Linear",
-      "colors": [
-        "#B87CFF",
-        "#160E1E"
-      ],
-      "transparency": [
-        0,
-        0
-      ],
-      "rotation": 180,
-      "offset": [
-        0,
-        0
-      ],
-      "size": [
-        1,
-        1
-      ]
-    },
-    "nameGradient": {
-      "enabled": false,
-      "type": "Linear",
-      "colors": [
-        "#FFFFFF",
-        "#B87CFF"
-      ],
-      "transparency": [
-        0,
-        0
-      ],
-      "rotation": 0,
-      "offset": [
-        0,
-        0
-      ],
-      "size": [
-        1,
-        1
-      ]
-    },
-    "roleGradient": {
-      "enabled": false,
-      "type": "Linear",
-      "colors": [
-        "#B87CFF",
-        "#8850CC"
-      ],
-      "transparency": [
-        0,
-        0
-      ],
-      "rotation": 0,
-      "offset": [
-        0,
-        0
-      ],
-      "size": [
-        1,
-        1
-      ]
-    },
-    "borderGradient": {
-      "enabled": false,
-      "type": "Linear",
-      "colors": [
-        "#B87CFF",
-        "#AA64FF"
-      ],
-      "transparency": [
-        0,
-        0
-      ],
-      "rotation": 0,
-      "offset": [
-        0,
-        0
-      ],
-      "size": [
-        1,
-        1
-      ]
-    }
-  },
   "profilePictures": {
     "owner": {
       "url": "https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-telelumi.png",
@@ -284,15 +185,9 @@
     }
   },
   "customAvatars": {
-    "usxirr": {
-      "url": "https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-Oso.png",
-      "file": "assets/TL-Usxirr.png",
-      "strokeStart": "#FFFFFF",
-      "strokeEnd": "#000000"
-    },
     "Ridgezruby13": {
-      "url": "https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-telelumi.png",
-      "file": "assets/TL-telelumi.png",
+      "url": "https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-STAFF.png",
+      "file": "assets/TL-Ridgezruby13.png",
       "strokeStart": "#FFFFFF",
       "strokeEnd": "#000000"
     }
