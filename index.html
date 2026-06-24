@@ -142,6 +142,7 @@ nav { position: fixed; inset: 0 0 auto 0; z-index: 200; height: 56px; display: g
 
 /* Color grid */
 .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.color-grid .toggle-wrap { grid-column: 1 / -1; }
 
 /* Avatar table */
 .avatar-table { width: 100%; border-collapse: collapse; }
@@ -408,12 +409,12 @@ const DEFAULTS = {
   version: 1,
   enabled: true,
   themes: {
-    user:       { bg:"#1A1A22", avatarBg:"#1F1F2C", avatarText:"#A0A0C0", divider:"#A0A0C0", border:"#A0A0B4", nameText:"#E6E6F0", roleText:"#7878A0" },
-    admin:      { bg:"#220E0E", avatarBg:"#2A1212", avatarText:"#FF6464", divider:"#FF6464", border:"#DC5050", nameText:"#FF8C8C", roleText:"#C83C3C" },
-    owner:      { bg:"#160E1E", avatarBg:"#1B1226", avatarText:"#B87CFF", divider:"#B87CFF", border:"#AA64FF", nameText:"#DDB8FF", roleText:"#8850CC" },
-    developer:  { bg:"#0C1428", avatarBg:"#101A34", avatarText:"#64B4FF", divider:"#64B4FF", border:"#50A0F0", nameText:"#8CD2FF", roleText:"#3C82DC" },
-    advertising:{ bg:"#1C0E24", avatarBg:"#24122E", avatarText:"#C878FF", divider:"#C878FF", border:"#B464F0", nameText:"#E6AAFF", roleText:"#A050D2" },
-    moderator:  { bg:"#221C0A", avatarBg:"#2A220C", avatarText:"#FFC83C", divider:"#FFC83C", border:"#F0B428", nameText:"#FFDC64", roleText:"#DCA01E" }
+    user:       { bg:"#1A1A22", avatarBg:"#1F1F2C", avatarText:"#A0A0C0", divider:"#A0A0C0", border:"#A0A0B4", nameText:"#E6E6F0", roleText:"#7878A0", bgGradient:false, bgGradientStart:"#1A1A22", bgGradientEnd:"#0E0E18", bgGradientRotation:0 },
+    admin:      { bg:"#220E0E", avatarBg:"#2A1212", avatarText:"#FF6464", divider:"#FF6464", border:"#DC5050", nameText:"#FF8C8C", roleText:"#C83C3C", bgGradient:false, bgGradientStart:"#220E0E", bgGradientEnd:"#150808", bgGradientRotation:0 },
+    owner:      { bg:"#160E1E", avatarBg:"#1B1226", avatarText:"#B87CFF", divider:"#B87CFF", border:"#AA64FF", nameText:"#DDB8FF", roleText:"#8850CC", bgGradient:false, bgGradientStart:"#160E1E", bgGradientEnd:"#0D0814", bgGradientRotation:0 },
+    developer:  { bg:"#0C1428", avatarBg:"#101A34", avatarText:"#64B4FF", divider:"#64B4FF", border:"#50A0F0", nameText:"#8CD2FF", roleText:"#3C82DC", bgGradient:false, bgGradientStart:"#0C1428", bgGradientEnd:"#060A18", bgGradientRotation:0 },
+    advertising:{ bg:"#1C0E24", avatarBg:"#24122E", avatarText:"#C878FF", divider:"#C878FF", border:"#B464F0", nameText:"#E6AAFF", roleText:"#A050D2", bgGradient:false, bgGradientStart:"#1C0E24", bgGradientEnd:"#100818", bgGradientRotation:0 },
+    moderator:  { bg:"#221C0A", avatarBg:"#2A220C", avatarText:"#FFC83C", divider:"#FFC83C", border:"#F0B428", nameText:"#FFDC64", roleText:"#DCA01E", bgGradient:false, bgGradientStart:"#221C0A", bgGradientEnd:"#141006", bgGradientRotation:0 }
   },
   layout: {
     billboardWidth:240, billboardHeight:44, studsOffsetY:3.4,
@@ -493,7 +494,7 @@ function switchTheme(t) {
 function buildColorGrid() {
   const c = document.getElementById("colorGrid");
   const theme = config.themes[activeTheme];
-  c.innerHTML = THEME_COLORS.map(k => `
+  const gradFields = THEME_COLORS.map(k => `
     <div class="field">
       <label class="field-label">${THEME_LABELS[k]}</label>
       <div class="color-pick">
@@ -502,6 +503,40 @@ function buildColorGrid() {
       </div>
     </div>
   `).join("");
+
+  const gradSection = `
+    <div style="grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;">
+      <div class="toggle-wrap">
+        <span class="toggle-label">Hintergrund-Gradient</span>
+        <div class="toggle ${theme.bgGradient?'on':''}" onclick="config.themes['${activeTheme}'].bgGradient=!config.themes['${activeTheme}'].bgGradient; toggleSwitch(this); updatePreview()"><div class="toggle-knob"></div></div>
+      </div>
+      ${theme.bgGradient ? `
+        <div class="field">
+          <label class="field-label">Start-Farbe</label>
+          <div class="color-pick">
+            <input type="color" value="${theme.bgGradientStart}" onchange="config.themes['${activeTheme}'].bgGradientStart=this.value; this.nextElementSibling.value=this.value; updatePreview()">
+            <input type="text" class="hex" value="${theme.bgGradientStart}" onchange="config.themes['${activeTheme}'].bgGradientStart=this.value; this.previousElementSibling.value=this.value; updatePreview()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">End-Farbe</label>
+          <div class="color-pick">
+            <input type="color" value="${theme.bgGradientEnd}" onchange="config.themes['${activeTheme}'].bgGradientEnd=this.value; this.nextElementSibling.value=this.value; updatePreview()">
+            <input type="text" class="hex" value="${theme.bgGradientEnd}" onchange="config.themes['${activeTheme}'].bgGradientEnd=this.value; this.previousElementSibling.value=this.value; updatePreview()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Rotation (Grad)</label>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="360" step="1" value="${theme.bgGradientRotation}" oninput="config.themes['${activeTheme}'].bgGradientRotation=parseInt(this.value); this.nextElementSibling.textContent=this.value+'°'; updatePreview()">
+            <span class="slider-val">${theme.bgGradientRotation}°</span>
+          </div>
+        </div>
+        <div style="height: 20px; border-radius: 6px; margin-top: 4px; background: linear-gradient(${theme.bgGradientRotation}deg, ${theme.bgGradientStart}, ${theme.bgGradientEnd}); border: 1px solid var(--line2);"></div>
+      ` : ''}
+    </div>
+  `;
+  c.innerHTML = gradFields + gradSection;
 }
 
 // ── LAYOUT ──
@@ -758,7 +793,13 @@ function updatePreview() {
   const preview = document.getElementById("ntPreview");
   preview.style.width = w + "px";
   preview.style.height = h + "px";
-  preview.style.background = t.bg;
+
+  // Gradient oder Solid Background
+  if (t.bgGradient) {
+    preview.style.background = `linear-gradient(${t.bgGradientRotation||0}deg, ${t.bgGradientStart}, ${t.bgGradientEnd})`;
+  } else {
+    preview.style.background = t.bg;
+  }
 
   const border = document.getElementById("ntBorder");
   border.style.border = l.borderThickness + "px solid " + t.border;
