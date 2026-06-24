@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nametag Configurator — TLMenu</title>
+<meta name="description" content="Visueller Editor für das TLMenu Nametag-System. Konfiguriere Farben, Layout, Animationen und mehr.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:    #07090f;
+  --bg1:   #0d1018;
+  --bg2:   #131720;
+  --bg3:   #1a1f2c;
+  --bg4:   #222838;
+  --line:  rgba(255,255,255,0.07);
+  --line2: rgba(255,255,255,0.13);
+  --t1: #e8f0f8;
+  --t2: #5a7290;
+  --t3: #2e3d52;
+  --acc: #00d4ff;
+  --acc2: #00b8e0;
+  --blue: #4b6cf7;
+  --red: #ff3c5a;
+  --green: #3cff6e;
+  --grad: linear-gradient(135deg, #4b6cf7 0%, #00d4ff 100%);
+  --head: 'Geist', sans-serif;
+  --body: 'Geist', sans-serif;
+  --mono: 'Geist Mono', 'Geist', sans-serif;
+}
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── AMBIENT BG ── */
+.bg-fx { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg-orb { position: absolute; border-radius: 50%; opacity: 1; will-change: transform; contain: strict; }
+.bg-orb.o1 { width: 900px; height: 900px; background: radial-gradient(circle, rgba(75,108,247,0.22) 0%, rgba(75,108,247,0.08) 40%, transparent 70%); top: -350px; left: -300px; animation: drift1 26s ease-in-out infinite; }
+.bg-orb.o2 { width: 800px; height: 800px; background: radial-gradient(circle, rgba(0,212,255,0.18) 0%, rgba(0,212,255,0.06) 40%, transparent 70%); top: 20%; right: -300px; animation: drift2 32s ease-in-out infinite; }
+.bg-orb.o3 { width: 720px; height: 720px; background: radial-gradient(circle, rgba(124,58,237,0.16) 0%, rgba(124,58,237,0.05) 40%, transparent 70%); bottom: -250px; left: 25%; animation: drift3 28s ease-in-out infinite; }
+.bg-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,0,0,0.6), transparent 70%); }
+@keyframes drift1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(120px, 80px) scale(1.15); } }
+@keyframes drift2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-100px, 100px) scale(1.1); } }
+@keyframes drift3 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(80px, -90px) scale(1.2); } }
+@media (prefers-reduced-motion: reduce) { .bg-orb { animation: none !important; } }
+
+main, nav, footer, section { position: relative; z-index: 1; }
+
+/* ── CUSTOM CURSOR ── */
+.cursor { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border-radius: 50%; pointer-events: none; z-index: 9999; will-change: transform; background: radial-gradient(circle, rgba(0,212,255,0.45) 0%, rgba(0,212,255,0.12) 50%, transparent 80%); transition: width 350ms cubic-bezier(0.16,1,0.3,1), height 350ms cubic-bezier(0.16,1,0.3,1), background 350ms, opacity 250ms; }
+.cursor-trail { position: fixed; top: 0; left: 0; width: 90px; height: 90px; border-radius: 50%; pointer-events: none; z-index: 9998; will-change: transform; background: radial-gradient(circle, rgba(75,108,247,0.14) 0%, rgba(0,212,255,0.05) 50%, transparent 80%); transition: width 500ms cubic-bezier(0.16,1,0.3,1), height 500ms cubic-bezier(0.16,1,0.3,1), opacity 300ms; }
+.cursor-dot { position: fixed; top: 0; left: 0; width: 5px; height: 5px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; box-shadow: 0 0 8px rgba(0,212,255,0.8); will-change: transform; transition: opacity 200ms, width 250ms, height 250ms; }
+.cursor.hover { width: 70px; height: 70px; background: radial-gradient(circle, rgba(0,212,255,0.38) 0%, rgba(124,58,237,0.14) 50%, transparent 80%); }
+.cursor-trail.hover { width: 140px; height: 140px; opacity: 0.7; }
+.cursor-dot.hover { width: 8px; height: 8px; opacity: 0; }
+.cursor.hidden, .cursor-dot.hidden, .cursor-trail.hidden { opacity: 0; }
+@media (max-width: 960px), (hover: none) { body { cursor: auto; } .cursor, .cursor-dot, .cursor-trail { display: none; } }
+
+a { text-decoration: none; }
+
+/* ── NAV ── */
+nav { position: fixed; inset: 0 0 auto 0; z-index: 200; height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 40px; background: rgba(7,9,15,0.96); border-bottom: 1px solid var(--line); }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--head); font-size: 18px; font-weight: 800; color: var(--t1); letter-spacing: -0.03em; }
+.logo-mark { width: 28px; height: 28px; border-radius: 7px; position: relative; overflow: hidden; transition: transform 300ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 300ms; }
+.logo-mark img { position: absolute; top: 50%; left: 50%; width: 160%; height: 160%; transform: translate(-50%, -50%); object-fit: cover; display: block; }
+.logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); box-shadow: 0 0 24px rgba(0,212,255,0.4); }
+.nav-links { display: flex; gap: 28px; list-style: none; justify-self: center; white-space: nowrap; }
+.nav-links a { font-size: 13px; font-weight: 400; color: var(--t2); transition: color 200ms; position: relative; padding-bottom: 4px; }
+.nav-links a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 1px; background: var(--acc); transition: width 250ms cubic-bezier(0.16,1,0.3,1); }
+.nav-links a:hover { color: var(--t1); }
+.nav-links a:hover::after { width: 100%; }
+.nav-btn { display: flex; align-items: center; gap: 7px; padding: 9px 22px; background: rgba(0,212,255,0.10); border: 1px solid rgba(0,212,255,0.25); border-radius: 10px; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--t1); letter-spacing: 0.04em; cursor: pointer; transition: all 300ms cubic-bezier(0.16,1,0.3,1); justify-self: end; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 20px rgba(0,212,255,0.08); }
+.nav-btn:hover { background: rgba(0,212,255,0.14); border-color: rgba(0,212,255,0.45); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 28px rgba(0,212,255,0.22); transform: translateY(-1px); }
+.nav-btn:active { transform: scale(0.96); }
+
+/* ── MAIN LAYOUT ── */
+.app { display: grid; grid-template-columns: 420px 1fr; min-height: 100vh; padding-top: 56px; }
+
+/* ── EDITOR PANEL ── */
+.editor { background: var(--bg1); border-right: 1px solid var(--line); overflow-y: auto; max-height: calc(100vh - 56px); padding: 24px 0; }
+.editor::-webkit-scrollbar { width: 6px; }
+.editor::-webkit-scrollbar-track { background: transparent; }
+.editor::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+/* ── SECTION ── */
+.ed-section { border-bottom: 1px solid var(--line); }
+.ed-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 200ms; }
+.ed-head:hover { background: rgba(255,255,255,0.02); }
+.ed-head h3 { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--t2); letter-spacing: 0.1em; text-transform: uppercase; }
+.ed-head .arrow { font-size: 10px; color: var(--t3); transition: transform 250ms; }
+.ed-head.open .arrow { transform: rotate(180deg); }
+.ed-body { padding: 0 20px 16px; display: none; }
+.ed-body.open { display: block; }
+
+/* ── FORM CONTROLS ── */
+.field { margin-bottom: 12px; }
+.field-label { font-family: var(--mono); font-size: 10px; color: var(--t3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.field-row { display: flex; gap: 8px; align-items: center; }
+.field input[type="text"], .field input[type="number"], .field select { width: 100%; padding: 8px 10px; background: var(--bg); border: 1px solid var(--line2); border-radius: 6px; font-family: var(--mono); font-size: 11px; color: var(--t1); outline: none; transition: border-color 200ms; }
+.field input:focus, .field select:focus { border-color: rgba(0,212,255,0.5); }
+.field input[type="number"] { -moz-appearance: textfield; }
+.field input::-webkit-outer-spin-button, .field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Color picker */
+.color-pick { display: flex; align-items: center; gap: 8px; }
+.color-pick input[type="color"] { width: 32px; height: 32px; border: 1px solid var(--line2); border-radius: 6px; cursor: pointer; background: var(--bg); padding: 2px; }
+.color-pick input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.color-pick input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+.color-pick .hex { font-family: var(--mono); font-size: 11px; color: var(--t2); width: 70px; }
+
+/* Toggle */
+.toggle-wrap { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+.toggle-label { font-family: var(--mono); font-size: 11px; color: var(--t2); }
+.toggle { position: relative; width: 36px; height: 18px; background: var(--bg4); border: 1px solid var(--line2); border-radius: 9px; cursor: pointer; transition: all 160ms; flex-shrink: 0; }
+.toggle.on { background: var(--acc); border-color: var(--acc); }
+.toggle-knob { position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: var(--t3); border-radius: 50%; transition: all 160ms cubic-bezier(0.34,1.56,0.64,1); }
+.toggle.on .toggle-knob { left: 20px; background: var(--bg); }
+
+/* Slider */
+.slider-wrap { display: flex; align-items: center; gap: 10px; }
+.slider-wrap input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; background: var(--bg4); border-radius: 2px; outline: none; }
+.slider-wrap input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--acc); border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); }
+.slider-val { font-family: var(--mono); font-size: 11px; color: var(--t2); min-width: 40px; text-align: right; }
+
+/* Theme tabs */
+.theme-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+.theme-tab { padding: 6px 12px; background: var(--bg); border: 1px solid var(--line2); border-radius: 6px; font-family: var(--mono); font-size: 10px; color: var(--t3); cursor: pointer; transition: all 200ms; letter-spacing: 0.05em; }
+.theme-tab.active { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.4); color: var(--acc); }
+.theme-tab:hover:not(.active) { border-color: rgba(0,212,255,0.2); color: var(--t2); }
+
+/* Color grid */
+.color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Avatar table */
+.avatar-table { width: 100%; border-collapse: collapse; }
+.avatar-table th { font-family: var(--mono); font-size: 9px; color: var(--t3); letter-spacing: 0.08em; text-transform: uppercase; text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+.avatar-table td { padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.avatar-table input { width: 100%; padding: 5px 6px; background: var(--bg); border: 1px solid var(--line2); border-radius: 4px; font-family: var(--mono); font-size: 10px; color: var(--t1); outline: none; }
+.avatar-table input:focus { border-color: rgba(0,212,255,0.5); }
+.avatar-table .color-pick input[type="color"] { width: 24px; height: 24px; }
+.btn-sm { padding: 5px 10px; background: var(--bg3); border: 1px solid var(--line2); border-radius: 5px; font-family: var(--mono); font-size: 9px; color: var(--t2); cursor: pointer; transition: all 200ms; letter-spacing: 0.04em; }
+.btn-sm:hover { border-color: rgba(0,212,255,0.4); color: var(--acc); }
+.btn-sm.danger:hover { border-color: rgba(255,60,90,0.4); color: var(--red); }
+.btn-add { width: 100%; padding: 8px; background: rgba(0,212,255,0.08); border: 1px dashed rgba(0,212,255,0.3); border-radius: 6px; font-family: var(--mono); font-size: 10px; color: var(--acc); cursor: pointer; transition: all 200ms; margin-top: 8px; }
+.btn-add:hover { background: rgba(0,212,255,0.14); border-color: rgba(0,212,255,0.5); }
+
+/* Keyword tags */
+.kw-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.kw-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--bg3); border: 1px solid var(--line); border-radius: 4px; font-family: var(--mono); font-size: 10px; color: var(--t2); }
+.kw-tag .rm { cursor: pointer; color: var(--t3); font-size: 12px; line-height: 1; transition: color 150ms; }
+.kw-tag .rm:hover { color: var(--red); }
+
+/* ── PREVIEW PANEL ── */
+.preview { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; background: var(--bg); position: relative; overflow: hidden; }
+.preview::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(75,108,247,0.08) 0%, transparent 70%); left: 50%; top: 50%; transform: translate(-50%,-50%); pointer-events: none; animation: glowPulse 6s ease-in-out infinite; }
+@keyframes glowPulse { 0%, 100% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 50% { opacity: 0.6; transform: translate(-50%,-50%) scale(1.2); } }
+
+.preview-theme-btns { display: flex; gap: 6px; margin-bottom: 32px; position: relative; z-index: 2; flex-wrap: wrap; justify-content: center; }
+.preview-theme-btn { padding: 7px 14px; background: var(--bg2); border: 1px solid var(--line2); border-radius: 8px; font-family: var(--mono); font-size: 10px; color: var(--t2); cursor: pointer; transition: all 200ms; letter-spacing: 0.05em; }
+.preview-theme-btn.active { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.4); color: var(--acc); }
+.preview-theme-btn:hover:not(.active) { border-color: rgba(0,212,255,0.2); }
+
+/* Nametag preview */
+.nt-preview-wrap { position: relative; z-index: 2; margin-bottom: 32px; }
+.nt-preview { border-radius: 8px; overflow: hidden; display: flex; align-items: stretch; box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: all 300ms; position: relative; }
+.nt-av { display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px 0 0 8px; overflow: hidden; position: relative; }
+.nt-av-inner { width: calc(100% - 6px); height: calc(100% - 6px); border-radius: 5px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: var(--head); font-weight: 700; }
+.nt-av img { width: 100%; height: 100%; object-fit: cover; }
+.nt-divider { width: 1px; align-self: stretch; margin: 20% 0; }
+.nt-content { padding: 4px 10px 4px 10px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.nt-name { font-family: var(--head); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nt-role { font-family: var(--head); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nt-border { position: absolute; inset: 0; border-radius: 8px; pointer-events: none; }
+
+/* Particles */
+.nt-particles { position: absolute; inset: 0; overflow: hidden; border-radius: 8px; pointer-events: none; }
+.nt-particle { position: absolute; border-radius: 50%; opacity: 0.5; animation: particleFloat 4s ease-in-out infinite; }
+@keyframes particleFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(var(--dx), var(--dy)); } }
+
+/* Status badge */
+.preview-status { position: relative; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: 10px; color: var(--t2); }
+.preview-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(60,255,110,0.5); } 70% { box-shadow: 0 0 0 6px rgba(60,255,110,0); } 100% { box-shadow: 0 0 0 0 rgba(60,255,110,0); } }
+
+/* ── ACTION BAR ── */
+.action-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 40px; background: rgba(7,9,15,0.96); border-top: 1px solid var(--line); }
+.btn-grad { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; background: linear-gradient(135deg, rgba(75,108,247,0.22), rgba(0,212,255,0.14)); border: 1px solid rgba(0,212,255,0.35); border-radius: 10px; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--t1); letter-spacing: 0.06em; cursor: pointer; transition: all 300ms cubic-bezier(0.16,1,0.3,1); text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 24px rgba(0,212,255,0.1); }
+.btn-grad:hover { border-color: rgba(0,212,255,0.6); box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,212,255,0.28); transform: translateY(-2px); }
+.btn-grad:active { transform: scale(0.97) translateY(0) !important; }
+.btn-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; background: rgba(255,255,255,0.05); border: 1px solid var(--line2); border-radius: 10px; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--t2); letter-spacing: 0.06em; cursor: pointer; transition: all 300ms cubic-bezier(0.16,1,0.3,1); text-transform: uppercase; }
+.btn-ghost:hover { color: var(--t1); border-color: rgba(0,212,255,0.4); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 28px rgba(0,212,255,0.12); transform: translateY(-2px); }
+.btn-ghost:active { transform: scale(0.97) translateY(0); }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg1); border: 1px solid var(--line2); border-radius: 14px; width: 90%; max-width: 700px; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.modal-header h3 { font-family: var(--head); font-size: 16px; font-weight: 700; color: var(--t1); }
+.modal-close { width: 28px; height: 28px; display: grid; place-items: center; background: transparent; border: 1px solid var(--line2); border-radius: 6px; color: var(--t3); font-size: 14px; cursor: pointer; transition: all 150ms; }
+.modal-close:hover { background: rgba(220,80,80,0.15); border-color: rgba(220,80,80,0.4); color: #d07070; }
+.modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+.modal-body textarea { width: 100%; height: 400px; background: var(--bg); border: 1px solid var(--line2); border-radius: 8px; padding: 14px; font-family: var(--mono); font-size: 11px; color: var(--t1); resize: vertical; outline: none; }
+.modal-body textarea:focus { border-color: rgba(0,212,255,0.5); }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 14px 20px; border-top: 1px solid var(--line); }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); padding: 10px 20px; background: var(--bg3); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px; font-family: var(--mono); font-size: 11px; color: var(--acc); z-index: 2000; opacity: 0; transition: all 300ms; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .app { grid-template-columns: 1fr; }
+  .editor { max-height: 50vh; border-right: none; border-bottom: 1px solid var(--line); }
+  .preview { min-height: 50vh; padding: 24px; }
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-fx">
+  <div class="bg-grid"></div>
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+  <div class="bg-orb o3"></div>
+</div>
+
+<div class="cursor-trail" id="cursorTrail"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark"><img src="https://raw.githubusercontent.com/telelumi/TLASSETS/refs/heads/main/Icons/TL-Icon.png" alt="TL"></div>
+    Nametag Config
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://telelumi.github.io">Home</a></li>
+    <li><a href="https://telelumi.github.io/Nametags">Nametags</a></li>
+  </ul>
+  <button class="nav-btn" id="navImport">Import JSON</button>
+</nav>
+
+<div class="app">
+
+  <!-- EDITOR -->
+  <div class="editor" id="editor">
+
+    <!-- Global -->
+    <div class="ed-section">
+      <div class="ed-head open" onclick="toggleSection(this)">
+        <h3>Global</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body open">
+        <div class="toggle-wrap">
+          <span class="toggle-label">Nametag System aktiviert</span>
+          <div class="toggle on" id="togEnabled" onclick="toggleSwitch(this); updateConfig()"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Themes -->
+    <div class="ed-section">
+      <div class="ed-head open" onclick="toggleSection(this)">
+        <h3>Farb-Themes</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body open">
+        <div class="theme-tabs" id="themeTabs"></div>
+        <div class="color-grid" id="colorGrid"></div>
+      </div>
+    </div>
+
+    <!-- Layout -->
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Layout</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="layoutBody"></div>
+    </div>
+
+    <!-- Animation -->
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Animation</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="animBody"></div>
+    </div>
+
+    <!-- Particles -->
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Partikel</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="particleBody"></div>
+    </div>
+
+    <!-- Role Keywords -->
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Rollen-Keywords</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="keywordsBody"></div>
+    </div>
+
+    <!-- Profile Pictures -->
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Profilbilder</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="profileBody"></div>
+    </div>
+
+    <!-- Custom Avatars -->
+    <div class="ed-section">
+      <div class="ed-head" onclick="toggleSection(this)">
+        <h3>Custom Avatars</h3><span class="arrow">▼</span>
+      </div>
+      <div class="ed-body" id="avatarBody"></div>
+    </div>
+
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div class="preview-theme-btns" id="previewThemeBtns"></div>
+    <div class="nt-preview-wrap">
+      <div class="nt-preview" id="ntPreview">
+        <div class="nt-border" id="ntBorder"></div>
+        <div class="nt-av" id="ntAv">
+          <div class="nt-av-inner" id="ntAvInner"></div>
+        </div>
+        <div class="nt-divider" id="ntDivider"></div>
+        <div class="nt-content">
+          <div class="nt-name" id="ntName">PlayerName</div>
+          <div class="nt-role" id="ntRole">TL USER</div>
+        </div>
+        <div class="nt-particles" id="ntParticles"></div>
+      </div>
+    </div>
+    <div class="preview-status">
+      <div class="dot"></div>
+      <span>Live-Preview — Änderungen werden sofort angezeigt</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <button class="btn-grad" onclick="exportJSON()">JSON Exportieren</button>
+  <button class="btn-ghost" onclick="importJSON()">JSON Importieren</button>
+  <button class="btn-ghost" onclick="resetDefaults()">Standardwerte</button>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>NametagConfig.json</h3>
+      <button class="modal-close" onclick="closeModal('exportModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="exportArea" readonly></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="downloadJSON()">Als Datei laden</button>
+      <button class="btn-grad" onclick="copyExport()">Kopieren</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>JSON Importieren</h3>
+      <button class="modal-close" onclick="closeModal('importModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="importArea" placeholder="JSON hier einfügen..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('importModal')">Abbrechen</button>
+      <button class="btn-grad" onclick="doImport()">Importieren</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DEFAULT CONFIG ──
+const DEFAULTS = {
+  version: 1,
+  enabled: true,
+  themes: {
+    user:       { bg:"#1A1A22", avatarBg:"#1F1F2C", avatarText:"#A0A0C0", divider:"#A0A0C0", border:"#A0A0B4", nameText:"#E6E6F0", roleText:"#7878A0" },
+    admin:      { bg:"#220E0E", avatarBg:"#2A1212", avatarText:"#FF6464", divider:"#FF6464", border:"#DC5050", nameText:"#FF8C8C", roleText:"#C83C3C" },
+    owner:      { bg:"#160E1E", avatarBg:"#1B1226", avatarText:"#B87CFF", divider:"#B87CFF", border:"#AA64FF", nameText:"#DDB8FF", roleText:"#8850CC" },
+    developer:  { bg:"#0C1428", avatarBg:"#101A34", avatarText:"#64B4FF", divider:"#64B4FF", border:"#50A0F0", nameText:"#8CD2FF", roleText:"#3C82DC" },
+    advertising:{ bg:"#1C0E24", avatarBg:"#24122E", avatarText:"#C878FF", divider:"#C878FF", border:"#B464F0", nameText:"#E6AAFF", roleText:"#A050D2" },
+    moderator:  { bg:"#221C0A", avatarBg:"#2A220C", avatarText:"#FFC83C", divider:"#FFC83C", border:"#F0B428", nameText:"#FFDC64", roleText:"#DCA01E" }
+  },
+  layout: {
+    billboardWidth:240, billboardHeight:44, studsOffsetY:3.4,
+    avatarWidth:44, cornerRadius:8, innerCornerRadius:5,
+    borderThickness:1, dividerWidth:1, dividerHeightPct:0.6, dividerTransparency:0.75,
+    nameTextSize:13, nameFont:"GothamBold", roleTextSize:9, roleFont:"GothamBold", initialsTextSize:11
+  },
+  animations: { fadeInDuration:0.3, fadeInEasing:"Quad", cardTransparency:0.1, borderTransparency:0.7 },
+  particles: {
+    enabled:true, count:4, minSize:2, maxSize:4, transparency:0.5,
+    moveDurationMin:3.0, moveDurationMax:5.0,
+    colors:["#B87CFF","#A064F0","#C896FF","#8C50DC","#DDB8FF"]
+  },
+  roleKeywords: {
+    owner:["owner","vip"], developer:["developer","entwickler"],
+    moderator:["moderator","mod"], admin:["admin","administrator"], advertising:["advertising","werbung"]
+  },
+  profilePictures: {
+    owner:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-telelumi.png", file:"assets/TL-telelumi.png" },
+    user:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TLUSER-ROLE.png", file:"assets/TLUSER-ROLE.png" }
+  },
+  customAvatars: {
+    usxirr:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-Oso.png", file:"assets/TL-Usxirr.png", strokeStart:"#9A7211", strokeEnd:"#000000" },
+    Abxsent0:{ url:"https://raw.githubusercontent.com/telelumi/telelumi.github.io/refs/heads/main/NAMETAG-PROFILEPICTURES/TL-Absent.png", file:"assets/TL-Abxsent0.png", strokeStart:"#06402B", strokeEnd:"#88E788" }
+  }
+};
+
+const THEME_COLORS = ["bg","avatarBg","avatarText","divider","border","nameText","roleText"];
+const THEME_LABELS = { bg:"Hintergrund", avatarBg:"Avatar BG", avatarText:"Avatar Text", divider:"Divider", border:"Border", nameText:"Name", roleText:"Role" };
+const THEME_NAMES = ["user","admin","owner","developer","advertising","moderator"];
+const EASING_OPTIONS = ["Quad","Linear","Sine","Expo","Back","Bounce","Elastic"];
+const FONT_OPTIONS = ["GothamBold","Gotham","GothamBlack","SourceSans","SourceSansBold","Highway","Ubuntu","UbuntuBold","Cartoon","Code","CartoonBold","ArialBold","Arial"];
+
+let config = JSON.parse(JSON.stringify(DEFAULTS));
+let activeTheme = "user";
+
+// ── INIT ──
+function init() {
+  buildThemeTabs();
+  buildColorGrid();
+  buildLayout();
+  buildAnimation();
+  buildParticles();
+  buildKeywords();
+  buildProfilePictures();
+  buildAvatars();
+  buildPreviewThemeBtns();
+  updatePreview();
+}
+
+// ── SECTION TOGGLE ──
+function toggleSection(el) {
+  el.classList.toggle("open");
+  el.nextElementSibling.classList.toggle("open");
+}
+
+function toggleSwitch(el) {
+  el.classList.toggle("on");
+}
+
+// ── THEME TABS ──
+function buildThemeTabs() {
+  const c = document.getElementById("themeTabs");
+  c.innerHTML = THEME_NAMES.map(t =>
+    `<div class="theme-tab ${t===activeTheme?'active':''}" onclick="switchTheme('${t}')">${t}</div>`
+  ).join("");
+}
+
+function switchTheme(t) {
+  activeTheme = t;
+  buildThemeTabs();
+  buildColorGrid();
+  updatePreview();
+}
+
+// ── COLOR GRID ──
+function buildColorGrid() {
+  const c = document.getElementById("colorGrid");
+  const theme = config.themes[activeTheme];
+  c.innerHTML = THEME_COLORS.map(k => `
+    <div class="field">
+      <label class="field-label">${THEME_LABELS[k]}</label>
+      <div class="color-pick">
+        <input type="color" value="${theme[k]}" onchange="config.themes['${activeTheme}']['${k}']=this.value; this.nextElementSibling.value=this.value; updatePreview()">
+        <input type="text" class="hex" value="${theme[k]}" onchange="config.themes['${activeTheme}']['${k}']=this.value; this.previousElementSibling.value=this.value; updatePreview()">
+      </div>
+    </div>
+  `).join("");
+}
+
+// ── LAYOUT ──
+function buildLayout() {
+  const l = config.layout;
+  const sliders = [
+    ["billboardWidth","Breite (px)",50,400,1],
+    ["billboardHeight","Höhe (px)",20,100,1],
+    ["studsOffsetY","Offset Y (Studs)",0,10,0.1],
+    ["avatarWidth","Avatar Breite (px)",20,80,1],
+    ["cornerRadius","Ecken-Radius",0,20,1],
+    ["innerCornerRadius","Innerer Radius",0,15,1],
+    ["borderThickness","Border Dicke",0,5,0.5],
+    ["dividerWidth","Divider Breite (px)",0,5,1],
+    ["dividerHeightPct","Divider Höhe (%)",0,1,0.05],
+    ["dividerTransparency","Divider Transparenz",0,1,0.05],
+    ["nameTextSize","Name TextSize",6,24,1],
+    ["roleTextSize","Role TextSize",6,18,1],
+    ["initialsTextSize","Initialen TextSize",6,18,1]
+  ];
+  const c = document.getElementById("layoutBody");
+  c.innerHTML = sliders.map(([key,label,min,max,step]) => `
+    <div class="field">
+      <label class="field-label">${label}</label>
+      <div class="slider-wrap">
+        <input type="range" min="${min}" max="${max}" step="${step}" value="${l[key]}" oninput="config.layout['${key}']=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${l[key]}</span>
+      </div>
+    </div>
+  `).join("") + `
+    <div class="field">
+      <label class="field-label">Name Font</label>
+      <select onchange="config.layout.nameFont=this.value; updatePreview()">
+        ${FONT_OPTIONS.map(f => `<option ${l.nameFont===f?'selected':''}>${f}</option>`).join("")}
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-label">Role Font</label>
+      <select onchange="config.layout.roleFont=this.value; updatePreview()">
+        ${FONT_OPTIONS.map(f => `<option ${l.roleFont===f?'selected':''}>${f}</option>`).join("")}
+      </select>
+    </div>
+  `;
+}
+
+// ── ANIMATION ──
+function buildAnimation() {
+  const a = config.animations;
+  const c = document.getElementById("animBody");
+  c.innerHTML = `
+    <div class="field">
+      <label class="field-label">Fade-In Dauer (s)</label>
+      <div class="slider-wrap">
+        <input type="range" min="0" max="2" step="0.05" value="${a.fadeInDuration}" oninput="config.animations.fadeInDuration=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()">
+        <span class="slider-val">${a.fadeInDuration}s</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Card Transparenz</label>
+      <div class="slider-wrap">
+        <input type="range" min="0" max="1" step="0.05" value="${a.cardTransparency}" oninput="config.animations.cardTransparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${a.cardTransparency}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Border Transparenz</label>
+      <div class="slider-wrap">
+        <input type="range" min="0" max="1" step="0.05" value="${a.borderTransparency}" oninput="config.animations.borderTransparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${a.borderTransparency}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Easing</label>
+      <select onchange="config.animations.fadeInEasing=this.value; updatePreview()">
+        ${EASING_OPTIONS.map(e => `<option ${a.fadeInEasing===e?'selected':''}>${e}</option>`).join("")}
+      </select>
+    </div>
+  `;
+}
+
+// ── PARTICLES ──
+function buildParticles() {
+  const p = config.particles;
+  const c = document.getElementById("particleBody");
+  c.innerHTML = `
+    <div class="toggle-wrap">
+      <span class="toggle-label">Partikel aktiviert</span>
+      <div class="toggle ${p.enabled?'on':''}" onclick="config.particles.enabled=!config.particles.enabled; toggleSwitch(this); updatePreview()"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="field">
+      <label class="field-label">Anzahl</label>
+      <div class="slider-wrap">
+        <input type="range" min="0" max="12" step="1" value="${p.count}" oninput="config.particles.count=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${p.count}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Min Größe (px)</label>
+      <div class="slider-wrap">
+        <input type="range" min="1" max="10" step="1" value="${p.minSize}" oninput="config.particles.minSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${p.minSize}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Max Größe (px)</label>
+      <div class="slider-wrap">
+        <input type="range" min="1" max="20" step="1" value="${p.maxSize}" oninput="config.particles.maxSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${p.maxSize}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Transparenz</label>
+      <div class="slider-wrap">
+        <input type="range" min="0" max="1" step="0.05" value="${p.transparency}" oninput="config.particles.transparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
+        <span class="slider-val">${p.transparency}</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Bewegung Min (s)</label>
+      <div class="slider-wrap">
+        <input type="range" min="0.5" max="10" step="0.5" value="${p.moveDurationMin}" oninput="config.particles.moveDurationMin=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()">
+        <span class="slider-val">${p.moveDurationMin}s</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Bewegung Max (s)</label>
+      <div class="slider-wrap">
+        <input type="range" min="0.5" max="10" step="0.5" value="${p.moveDurationMax}" oninput="config.particles.moveDurationMax=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()">
+        <span class="slider-val">${p.moveDurationMax}s</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Farben</label>
+      <div id="particleColors"></div>
+    </div>
+  `;
+  buildParticleColors();
+}
+
+function buildParticleColors() {
+  const c = document.getElementById("particleColors");
+  if (!c) return;
+  c.innerHTML = config.particles.colors.map((col, i) => `
+    <div class="color-pick" style="margin-bottom:6px">
+      <input type="color" value="${col}" onchange="config.particles.colors[${i}]=this.value; this.nextElementSibling.value=this.value; updatePreview()">
+      <input type="text" class="hex" value="${col}" onchange="config.particles.colors[${i}]=this.value; this.previousElementSibling.value=this.value; updatePreview()">
+      <button class="btn-sm danger" onclick="config.particles.colors.splice(${i},1); buildParticleColors(); updatePreview()">✕</button>
+    </div>
+  `).join("") + `
+    <button class="btn-add" onclick="config.particles.colors.push('#FFFFFF'); buildParticleColors(); updatePreview()">+ Farbe hinzufügen</button>
+  `;
+}
+
+// ── KEYWORDS ──
+function buildKeywords() {
+  const c = document.getElementById("keywordsBody");
+  c.innerHTML = THEME_NAMES.map(t => `
+    <div class="field">
+      <label class="field-label">${t}</label>
+      <div class="field-row">
+        <input type="text" id="kwInput_${t}" placeholder="Keyword eingeben..." onkeydown="if(event.key==='Enter'){addKeyword('${t}')}">
+        <button class="btn-sm" onclick="addKeyword('${t}')">+</button>
+      </div>
+      <div class="kw-tags" id="kwTags_${t}">
+        ${(config.roleKeywords[t]||[]).map((kw,i) => `
+          <span class="kw-tag">${kw} <span class="rm" onclick="removeKeyword('${t}',${i})">×</span></span>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+function addKeyword(theme) {
+  const inp = document.getElementById("kwInput_"+theme);
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  if (!config.roleKeywords[theme]) config.roleKeywords[theme] = [];
+  if (!config.roleKeywords[theme].includes(val)) config.roleKeywords[theme].push(val);
+  inp.value = "";
+  buildKeywords();
+}
+
+function removeKeyword(theme, idx) {
+  config.roleKeywords[theme].splice(idx, 1);
+  buildKeywords();
+}
+
+// ── PROFILE PICTURES ──
+function buildProfilePictures() {
+  const c = document.getElementById("profileBody");
+  const pp = config.profilePictures;
+  c.innerHTML = ["owner","user"].map(role => `
+    <div class="field" style="margin-bottom:16px">
+      <label class="field-label">${role} Profilbild</label>
+      <div class="field">
+        <label class="field-label">URL</label>
+        <input type="text" value="${pp[role]?.url||''}" onchange="config.profilePictures['${role}']=config.profilePictures['${role}']||{}; config.profilePictures['${role}'].url=this.value; updatePreview()">
+      </div>
+      <div class="field">
+        <label class="field-label">Lokaler Dateiname</label>
+        <input type="text" value="${pp[role]?.file||''}" onchange="config.profilePictures['${role}']=config.profilePictures['${role}']||{}; config.profilePictures['${role}'].file=this.value">
+      </div>
+    </div>
+  `).join("");
+}
+
+// ── CUSTOM AVATARS ──
+function buildAvatars() {
+  const c = document.getElementById("avatarBody");
+  const entries = Object.entries(config.customAvatars);
+  let html = `<table class="avatar-table">
+    <thead><tr><th>Username</th><th>URL</th><th>Datei</th><th>Stroke 1</th><th>Stroke 2</th><th></th></tr></thead>
+    <tbody>`;
+  entries.forEach(([name, av]) => {
+    html += `<tr>
+      <td><input value="${name}" data-orig="${name}" class="av-name"></td>
+      <td><input value="${av.url}" class="av-url"></td>
+      <td><input value="${av.file}" class="av-file"></td>
+      <td><div class="color-pick"><input type="color" value="${av.strokeStart}" class="av-s1"></div></td>
+      <td><div class="color-pick"><input type="color" value="${av.strokeEnd}" class="av-s2"></div></td>
+      <td><button class="btn-sm danger" onclick="delete config.customAvatars['${name}']; buildAvatars()">✕</button></td>
+    </tr>`;
+  });
+  html += `</tbody></table>
+    <button class="btn-add" onclick="addAvatar()">+ Avatar hinzufügen</button>`;
+  c.innerHTML = html;
+}
+
+function addAvatar() {
+  const name = "NewUser_" + Math.random().toString(36).substr(2,4);
+  config.customAvatars[name] = { url:"", file:"", strokeStart:"#FFFFFF", strokeEnd:"#000000" };
+  buildAvatars();
+}
+
+// ── PREVIEW THEME BTNS ──
+function buildPreviewThemeBtns() {
+  const c = document.getElementById("previewThemeBtns");
+  c.innerHTML = THEME_NAMES.map(t =>
+    `<div class="preview-theme-btn ${t===activeTheme?'active':''}" onclick="switchTheme('${t}'); buildPreviewThemeBtns()">${t}</div>`
+  ).join("");
+}
+
+// ── UPDATE PREVIEW ──
+function updatePreview() {
+  const t = config.themes[activeTheme];
+  const l = config.layout;
+  const a = config.animations;
+  const p = config.particles;
+
+  const w = l.billboardWidth;
+  const h = l.billboardHeight;
+  const avW = l.avatarWidth;
+
+  const preview = document.getElementById("ntPreview");
+  preview.style.width = w + "px";
+  preview.style.height = h + "px";
+  preview.style.background = t.bg;
+
+  const border = document.getElementById("ntBorder");
+  border.style.border = l.borderThickness + "px solid " + t.border;
+  border.style.borderRadius = l.cornerRadius + "px";
+  border.style.opacity = 1 - a.borderTransparency;
+
+  const av = document.getElementById("ntAv");
+  av.style.width = avW + "px";
+  av.style.background = t.avatarBg;
+  av.style.borderRadius = l.cornerRadius + "px 0 0 " + l.cornerRadius + "px";
+
+  const avInner = document.getElementById("ntAvInner");
+  avInner.style.fontSize = l.initialsTextSize + "px";
+  avInner.style.color = t.avatarText;
+  avInner.textContent = "TL";
+
+  const divider = document.getElementById("ntDivider");
+  divider.style.width = l.dividerWidth + "px";
+  divider.style.background = t.divider;
+  divider.style.opacity = 1 - l.dividerTransparency;
+  divider.style.margin = (l.billboardHeight * (1 - l.dividerHeightPct) / 2) + "px 0";
+
+  const name = document.getElementById("ntName");
+  name.style.fontSize = l.nameTextSize + "px";
+  name.style.color = t.nameText;
+  name.style.fontFamily = "var(--head)";
+
+  const role = document.getElementById("ntRole");
+  role.style.fontSize = l.roleTextSize + "px";
+  role.style.color = t.roleText;
+  role.style.fontFamily = "var(--head)";
+
+  // Particles
+  const pCont = document.getElementById("ntParticles");
+  pCont.innerHTML = "";
+  if (p.enabled && activeTheme === "owner") {
+    for (let i = 0; i < Math.min(p.count, p.colors.length); i++) {
+      const dot = document.createElement("div");
+      dot.className = "nt-particle";
+      const sz = p.minSize + Math.random() * (p.maxSize - p.minSize);
+      dot.style.width = sz + "px";
+      dot.style.height = sz + "px";
+      dot.style.background = p.colors[i % p.colors.length];
+      dot.style.opacity = 1 - p.transparency;
+      dot.style.left = (10 + Math.random() * 80) + "%";
+      dot.style.top = (10 + Math.random() * 80) + "%";
+      dot.style.setProperty("--dx", (Math.random()*20-10)+"px");
+      dot.style.setProperty("--dy", (Math.random()*20-10)+"px");
+      dot.style.animationDuration = (p.moveDurationMin + Math.random()*(p.moveDurationMax-p.moveDurationMin)) + "s";
+      pCont.appendChild(dot);
+    }
+  }
+}
+
+// ── EXPORT / IMPORT ──
+function exportJSON() {
+  syncAvatarsFromDOM();
+  document.getElementById("exportArea").value = JSON.stringify(config, null, 2);
+  document.getElementById("exportModal").classList.add("open");
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById("exportArea").value).catch(()=>{});
+  toast("JSON kopiert!");
+  closeModal("exportModal");
+}
+
+function downloadJSON() {
+  const blob = new Blob([JSON.stringify(config, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "NametagConfig.json";
+  a.click();
+  toast("Download gestartet!");
+}
+
+function importJSON() {
+  document.getElementById("importArea").value = "";
+  document.getElementById("importModal").classList.add("open");
+}
+
+function doImport() {
+  try {
+    const data = JSON.parse(document.getElementById("importArea").value);
+    if (!data.version) throw new Error("Kein version Feld");
+    config = data;
+    rebuildAll();
+    closeModal("importModal");
+    toast("JSON importiert!");
+  } catch(e) {
+    toast("Fehler: " + e.message);
+  }
+}
+
+function resetDefaults() {
+  if (!confirm("Alle Einstellungen auf Standard zurücksetzen?")) return;
+  config = JSON.parse(JSON.stringify(DEFAULTS));
+  rebuildAll();
+  toast("Zurückgesetzt!");
+}
+
+function rebuildAll() {
+  const tog = document.getElementById("togEnabled");
+  if (config.enabled) tog.classList.add("on"); else tog.classList.remove("on");
+  buildThemeTabs();
+  buildColorGrid();
+  buildLayout();
+  buildAnimation();
+  buildParticles();
+  buildKeywords();
+  buildProfilePictures();
+  buildAvatars();
+  buildPreviewThemeBtns();
+  updatePreview();
+}
+
+function syncAvatarsFromDOM() {
+  const rows = document.querySelectorAll("#avatarBody .avatar-table tbody tr");
+  const newAvatars = {};
+  rows.forEach(row => {
+    const name = row.querySelector(".av-name")?.value;
+    if (!name) return;
+    newAvatars[name] = {
+      url: row.querySelector(".av-url")?.value || "",
+      file: row.querySelector(".av-file")?.value || "",
+      strokeStart: row.querySelector(".av-s1")?.value || "#FFFFFF",
+      strokeEnd: row.querySelector(".av-s2")?.value || "#000000"
+    };
+  });
+  config.customAvatars = newAvatars;
+}
+
+// ── MODAL ──
+function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+// ── NAV IMPORT ──
+document.getElementById("navImport").addEventListener("click", importJSON);
+
+// ── MODAL BACKDROP CLOSE ──
+document.querySelectorAll(".modal-overlay").forEach(el => {
+  el.addEventListener("click", e => { if (e.target === el) el.classList.remove("open"); });
+});
+
+// ── CUSTOM CURSOR ──
+const cursor = document.getElementById("cursor");
+const cursorDot = document.getElementById("cursorDot");
+const cursorTrail = document.getElementById("cursorTrail");
+let mouseX = 0, mouseY = 0, cx = 0, cy = 0, tx = 0, ty = 0;
+window.addEventListener("mousemove", e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursorDot.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0)`;
+}, { passive: true });
+function cursorLoop() {
+  cx += (mouseX - cx) * 0.18; cy += (mouseY - cy) * 0.18;
+  tx += (mouseX - tx) * 0.07; ty += (mouseY - ty) * 0.07;
+  cursor.style.transform = `translate3d(calc(${cx}px - 50%), calc(${cy}px - 50%), 0)`;
+  cursorTrail.style.transform = `translate3d(calc(${tx}px - 50%), calc(${ty}px - 50%), 0)`;
+  requestAnimationFrame(cursorLoop);
+}
+cursorLoop();
+const hoverTargets = "a, button, .toggle, .theme-tab, .preview-theme-btn, .btn-sm, .btn-add, input, select";
+document.addEventListener("mouseover", e => {
+  if (e.target.closest(hoverTargets)) { cursor.classList.add("hover"); cursorTrail.classList.add("hover"); cursorDot.classList.add("hover"); }
+});
+document.addEventListener("mouseout", e => {
+  if (e.target.closest(hoverTargets)) { cursor.classList.remove("hover"); cursorTrail.classList.remove("hover"); cursorDot.classList.remove("hover"); }
+});
+document.addEventListener("mouseleave", () => { cursor.classList.add("hidden"); cursorDot.classList.add("hidden"); cursorTrail.classList.add("hidden"); });
+document.addEventListener("mouseenter", () => { cursor.classList.remove("hidden"); cursorDot.classList.remove("hidden"); cursorTrail.classList.remove("hidden"); });
+
+// ── START ──
+init();
+</script>
+</body>
+</html>
