@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nametag Configurator — TLMenu</title>
-<meta name="description" content="Visueller Editor für das TLMenu Nametag-System. Konfiguriere Farben, Layout, Animationen und mehr.">
+<meta name="description" content="Visual editor for the TLMenu Nametag system. Configure colors, layout, animations and more.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -254,12 +254,12 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
   <div class="pw-box">
     <div class="pw-logo"><img src="https://raw.githubusercontent.com/telelumi/TLASSETS/refs/heads/main/Icons/TL-Icon.png" alt="TL"></div>
     <h2>Nametag Configurator</h2>
-    <p>Zugang nur für autorisierte Benutzer</p>
+    <p>Access for authorized users only</p>
     <div class="pw-input-wrap">
-      <input type="password" id="pwInput" placeholder="Passwort eingeben..." autocomplete="off">
+      <input type="password" id="pwInput" placeholder="Enter password..." autocomplete="off">
       <button class="pw-eye" id="pwEye" onclick="togglePwVis()" type="button">👁</button>
     </div>
-    <button class="pw-btn" onclick="checkPassword()">Zugang</button>
+    <button class="pw-btn" onclick="checkPassword()">Access</button>
     <div class="pw-error" id="pwError"></div>
   </div>
 </div>
@@ -295,20 +295,20 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
       </div>
       <div class="ed-body open">
         <div class="toggle-wrap">
-          <span class="toggle-label">Nametag System aktiviert</span>
+          <span class="toggle-label">Nametag system enabled</span>
           <div class="toggle on" id="togEnabled" onclick="toggleSwitch(this); config.enabled=!config.enabled; updatePreview()"><div class="toggle-knob"></div></div>
         </div>
         <div class="field">
-          <label class="field-label">Gültig für Ziel-Username (Optional)</label>
-          <input type="text" class="input-text" id="targetUserInp" placeholder="Z.B. telelumi (Leer = Global für alle)" onchange="config.targetUser=this.value">
-          <div style="font-size: 11px; color: var(--t3); margin-top: 6px;">Wenn hier ein Name steht, wendet das Script diese Config nur auf diesen Spieler an.</div>
+          <label class="field-label">Valid for target username (Optional)</label>
+          <input type="text" class="input-text" id="targetUserInp" placeholder="e.g. telelumi (Empty = Global for all)" onchange="config.targetUser=this.value">
+          <div style="font-size: 11px; color: var(--t3); margin-top: 6px;">If a name is entered here, the script will only apply this config to that player.</div>
         </div>
       </div>
     </div>
 
     <div class="ed-section">
       <div class="ed-head open" onclick="toggleSection(this)">
-        <h3>Farb-Themes</h3><span class="arrow">▼</span>
+        <h3>Color Themes</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body open">
         <div class="theme-tabs" id="themeTabs"></div>
@@ -318,7 +318,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 
     <div class="ed-section">
       <div class="ed-head" onclick="toggleSection(this)">
-        <h3>Layout & Maße</h3><span class="arrow">▼</span>
+        <h3>Layout & Dimensions</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="layoutBody"></div>
     </div>
@@ -332,7 +332,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 
     <div class="ed-section">
       <div class="ed-head" onclick="toggleSection(this)">
-        <h3>Partikel System</h3><span class="arrow">▼</span>
+        <h3>Particle System</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="particleBody"></div>
     </div>
@@ -346,24 +346,24 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 
     <div class="ed-section">
       <div class="ed-head" onclick="toggleSection(this)">
-        <h3>Rollen Keywords</h3><span class="arrow">▼</span>
+        <h3>Role Keywords</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="keywordsBody"></div>
       <div style="padding: 0 16px 14px; font-size: 11px; color: var(--t3); line-height: 1.5;">
-        Keywords werden mit der Rollen-Beschreibung eines Spielers abgeglichen. Enthält die Rolle eines Spielers eines dieser Keywords, wird das passende Farbschema angewendet. Direkt zugewiesene Usernames haben Vorrang vor Keywords.
+        Keywords are matched against a player's role description. If a player's role contains one of these keywords, the matching color scheme is applied. Directly assigned usernames take priority over keywords.
       </div>
     </div>
 
     <div class="ed-section">
       <div class="ed-head" onclick="toggleSection(this)">
-        <h3>Rollen Profilbilder</h3><span class="arrow">▼</span>
+        <h3>Role Profile Pictures</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="profileBody"></div>
     </div>
 
     <div class="ed-section">
       <div class="ed-head" onclick="toggleSection(this)">
-        <h3>Custom Spieler-Avatare</h3><span class="arrow">▼</span>
+        <h3>Custom Player Avatars</h3><span class="arrow">▼</span>
       </div>
       <div class="ed-body" id="avatarBody"></div>
     </div>
@@ -374,11 +374,11 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
     
     <div class="preview-controls-bar">
       <div class="field">
-        <label class="field-label">Vorschau Name</label>
+        <label class="field-label">Preview Name</label>
         <input type="text" class="input-text" id="prevName" value="PlayerName" oninput="updatePreview()">
       </div>
       <div class="field">
-        <label class="field-label">Vorschau Rolle</label>
+        <label class="field-label">Preview Role</label>
         <input type="text" class="input-text" id="prevRole" value="TL USER" oninput="updatePreview()">
       </div>
     </div>
@@ -418,8 +418,8 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
       <textarea id="exportArea" readonly></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="downloadJSON()">Als Datei speichern</button>
-      <button class="btn btn-primary" onclick="copyExport()">In Zwischenablage kopieren</button>
+      <button class="btn btn-secondary" onclick="downloadJSON()">Save as file</button>
+      <button class="btn btn-primary" onclick="copyExport()">Copy to clipboard</button>
     </div>
   </div>
 </div>
@@ -427,15 +427,15 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 <div class="modal-overlay" id="importModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>Konfiguration Importieren</h3>
+      <h3>Import Configuration</h3>
       <button class="modal-close" onclick="closeModal('importModal')">✕</button>
     </div>
     <div class="modal-body">
-      <textarea id="importArea" placeholder="Füge hier deinen JSON-Code ein..."></textarea>
+      <textarea id="importArea" placeholder="Paste your JSON code here..."></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('importModal')">Abbrechen</button>
-      <button class="btn btn-primary" onclick="doImport()">Importieren</button>
+      <button class="btn btn-secondary" onclick="closeModal('importModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="doImport()">Import</button>
     </div>
   </div>
 </div>
@@ -447,7 +447,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; di
 const DEFAULTS = {
   version: 1,
   enabled: true,
-  targetUser: "", // <-- Neues Feld für spezifische Spielerzuweisung
+  targetUser: "", // <-- New field for specific player assignment
   themes: {
     user:       { bg:"#1A1A22", avatarBg:"#1F1F2C", avatarText:"#A0A0C0", divider:"#A0A0C0", border:"#A0A0B4", nameText:"#E6E6F0", roleText:"#7878A0", bgGradient:false, bgGradientType:"linear", bgGradientColors:["#1A1A22","#0E0E18"], bgGradientAngle:0 },
     admin:      { bg:"#220E0E", avatarBg:"#2A1212", avatarText:"#FF6464", divider:"#FF6464", border:"#DC5050", nameText:"#FF8C8C", roleText:"#C83C3C", bgGradient:false, bgGradientType:"linear", bgGradientColors:["#220E0E","#150808"], bgGradientAngle:0 },
@@ -478,14 +478,14 @@ const DEFAULTS = {
 };
 
 const THEME_COLORS = ["bg","avatarBg","avatarText","divider","border","nameText","roleText"];
-const THEME_LABELS = { bg:"Hintergrund", avatarBg:"Avatar BG", avatarText:"Avatar Text", divider:"Divider", border:"Rahmen", nameText:"Name", roleText:"Rolle" };
+const THEME_LABELS = { bg:"Background", avatarBg:"Avatar BG", avatarText:"Avatar Text", divider:"Divider", border:"Border", nameText:"Name", roleText:"Role" };
 const THEME_NAMES = ["user","admin","owner","developer","advertising","moderator"];
 const EASING_OPTIONS = ["Quad","Linear","Sine","Expo","Back","Bounce","Elastic"];
 const FONT_OPTIONS = ["GothamBold","Gotham","GothamBlack","SourceSans","SourceSansBold","Highway","Ubuntu","UbuntuBold","Cartoon","Code","CartoonBold","ArialBold","Arial"];
 
 // ── GRADIENT TYPES ──
-// Jeder Typ definiert: Anzeigename, wie viele Farben sinnvoll sind (immer 2-3 wählbar),
-// ob ein Rotations-/Winkel-Regler angezeigt wird, und eine CSS-Renderfunktion für die Live-Vorschau.
+// Each type defines: display name, how many colors are reasonable (always 2-3 selectable),
+// whether a rotation/angle slider is shown, and a CSS render function for the live preview.
 const GRADIENT_TYPES = {
   linear:      { label:"Linear Gradient",      angle:true,  render:(c,a)=>`linear-gradient(${a}deg, ${c.join(", ")})` },
   radial:      { label:"Radial Gradient",      angle:false, render:(c)=>`radial-gradient(circle at center, ${c.join(", ")})` },
@@ -526,8 +526,8 @@ let activeTheme = "user";
 
 // ── INIT ──
 function init() {
-  // Migration: stellt sicher, dass jedes Theme die neuen Gradient-Felder besitzt
-  // (wichtig beim Import älterer Configs ohne bgGradientType/Colors)
+  // Migration: ensures every theme has the new gradient fields
+  // (important when importing older configs without bgGradientType/Colors)
   THEME_NAMES.forEach(t => {
     const th = config.themes[t];
     if (!th) return;
@@ -574,7 +574,7 @@ function buildColorGrid() {
 
   const colorPickersHtml = colors.map((col, i) => `
     <div class="field" style="margin-bottom:10px;">
-      <label class="field-label">Farbe ${i+1}${colors.length < 3 ? '' : ''}</label>
+      <label class="field-label">Color ${i+1}${colors.length < 3 ? '' : ''}</label>
       <div class="field-row">
         <div class="color-pick" style="flex:1;">
           <input type="color" value="${col}" onchange="config.themes['${activeTheme}'].bgGradientColors[${i}]=this.value; this.nextElementSibling.value=this.value; updatePreview()">
@@ -588,21 +588,21 @@ function buildColorGrid() {
   const gradSection = `
     <div class="full-width" style="border-top: 1px solid var(--line); padding-top: 16px; margin-top: 8px;">
       <div class="toggle-wrap">
-        <span class="toggle-label">Hintergrund Verlauf aktiviert</span>
+        <span class="toggle-label">Background gradient enabled</span>
         <div class="toggle ${theme.bgGradient?'on':''}" onclick="config.themes['${activeTheme}'].bgGradient=!config.themes['${activeTheme}'].bgGradient; toggleSwitch(this); buildColorGrid(); updatePreview()"><div class="toggle-knob"></div></div>
       </div>
       ${theme.bgGradient ? `
         <div class="field">
-          <label class="field-label">Verlauf-Art</label>
+          <label class="field-label">Gradient Type</label>
           <select onchange="config.themes['${activeTheme}'].bgGradientType=this.value; buildColorGrid(); updatePreview()">
             ${GRADIENT_TYPE_KEYS.map(k => `<option value="${k}" ${theme.bgGradientType===k?'selected':''}>${GRADIENT_TYPES[k].label}</option>`).join("")}
           </select>
         </div>
         ${colorPickersHtml}
-        ${colors.length < 3 ? `<button class="btn-add" onclick="addGradColor('${activeTheme}')">+ Farbe hinzufügen</button>` : ''}
+        ${colors.length < 3 ? `<button class="btn-add" onclick="addGradColor('${activeTheme}')">+ Add color</button>` : ''}
         ${typeDef.angle ? `
         <div class="field" style="margin-top:14px;">
-          <label class="field-label">Winkel (Grad)</label>
+          <label class="field-label">Angle (degrees)</label>
           <div class="slider-wrap">
             <input type="range" min="0" max="360" step="1" value="${theme.bgGradientAngle}" oninput="config.themes['${activeTheme}'].bgGradientAngle=parseInt(this.value); this.nextElementSibling.textContent=this.value+'°'; updatePreview()">
             <span class="slider-val">${theme.bgGradientAngle}°</span>
@@ -629,7 +629,7 @@ function removeGradColor(theme, idx) {
   buildColorGrid(); updatePreview();
 }
 
-// Rendert den CSS-Verlauf für die Live-Vorschau inkl. Stilzusätze (Glow, Schimmer, Metallic, etc.)
+// Renders the CSS gradient for the live preview incl. style additions (Glow, Shimmer, Metallic, etc.)
 function renderGradientCss(theme) {
   const typeDef = GRADIENT_TYPES[theme.bgGradientType] || GRADIENT_TYPES.linear;
   const colors = theme.bgGradientColors && theme.bgGradientColors.length >= 2 ? theme.bgGradientColors : [theme.bg, theme.bg];
@@ -640,22 +640,22 @@ function renderGradientCss(theme) {
 function buildLayout() {
   const l = config.layout;
   const sliders = [
-    ["billboardWidth","Gesamtbreite (px)",50,400,1], ["billboardHeight","Gesamthöhe (px)",20,100,1],
+    ["billboardWidth","Total width (px)",50,400,1], ["billboardHeight","Total height (px)",20,100,1],
     ["studsOffsetY","Y-Offset (Studs)",0,10,0.1],
-    ["avatarWidth","Avatar Breite (px)",20,80,1], ["cornerRadius","Ecken-Radius",0,20,1],
-    ["innerCornerRadius","Innerer Ecken-Radius",0,20,1],
-    ["borderThickness","Rahmendicke",0,5,0.5], ["dividerWidth","Trennstrich Breite",0,5,1],
-    ["dividerHeightPct","Trennstrich Höhe (%)",0,1,0.05], ["dividerTransparency","Trennstrich Transparenz",0,1,0.05],
-    ["nameTextSize","Name Schriftgröße",6,24,1],
-    ["roleTextSize","Rollen Schriftgröße",6,18,1],
-    ["initialsTextSize","Initialen Schriftgröße",6,18,1],
-    ["avatarTextGap","Avatar-Text Abstand (px)",0,30,1],
-    ["textPaddingRight","Text Rechts-Padding (px)",0,20,1],
-    ["nameLabelHeight","Name Höhe (px)",8,40,1],
-    ["nameLabelY","Name Y-Position (px)",0,20,1],
-    ["roleLabelHeight","Rolle Höhe (px)",8,30,1],
-    ["roleLabelY","Rolle Y-Position (px)",0,40,1],
-    ["avatarImagePadding","Avatar Bild Inset (px)",0,10,1]
+    ["avatarWidth","Avatar width (px)",20,80,1], ["cornerRadius","Corner radius",0,20,1],
+    ["innerCornerRadius","Inner corner radius",0,20,1],
+    ["borderThickness","Border thickness",0,5,0.5], ["dividerWidth","Divider width",0,5,1],
+    ["dividerHeightPct","Divider height (%)",0,1,0.05], ["dividerTransparency","Divider transparency",0,1,0.05],
+    ["nameTextSize","Name font size",6,24,1],
+    ["roleTextSize","Role font size",6,18,1],
+    ["initialsTextSize","Initials font size",6,18,1],
+    ["avatarTextGap","Avatar-text gap (px)",0,30,1],
+    ["textPaddingRight","Text right padding (px)",0,20,1],
+    ["nameLabelHeight","Name height (px)",8,40,1],
+    ["nameLabelY","Name Y position (px)",0,20,1],
+    ["roleLabelHeight","Role height (px)",8,30,1],
+    ["roleLabelY","Role Y position (px)",0,40,1],
+    ["avatarImagePadding","Avatar image inset (px)",0,10,1]
   ];
   const c = document.getElementById("layoutBody");
   c.innerHTML = sliders.map(([key,label,min,max,step]) => `
@@ -668,22 +668,22 @@ function buildLayout() {
     </div>
   `).join("") + `
     <div class="field">
-      <label class="field-label">Name Schriftart</label>
+      <label class="field-label">Name font</label>
       <select onchange="config.layout.nameFont=this.value; updatePreview()">
         ${FONT_OPTIONS.map(f => `<option ${l.nameFont===f?'selected':''}>${f}</option>`).join("")}
       </select>
     </div>
     <div class="field">
-      <label class="field-label">Rollen Schriftart</label>
+      <label class="field-label">Role font</label>
       <select onchange="config.layout.roleFont=this.value; updatePreview()">
         ${FONT_OPTIONS.map(f => `<option ${l.roleFont===f?'selected':''}>${f}</option>`).join("")}
       </select>
     </div>
     <div class="field">
-      <label class="field-label">Rollen Text-Stil</label>
+      <label class="field-label">Role text style</label>
       <select onchange="config.layout.roleTextTransform=this.value; updatePreview()">
-        <option value="upper" ${l.roleTextTransform==='upper'?'selected':''}>Großbuchstaben (UPPER)</option>
-        <option value="lower" ${l.roleTextTransform==='lower'?'selected':''}>Kleinbuchstaben (lower)</option>
+        <option value="upper" ${l.roleTextTransform==='upper'?'selected':''}>Uppercase (UPPER)</option>
+        <option value="lower" ${l.roleTextTransform==='lower'?'selected':''}>Lowercase (lower)</option>
         <option value="none" ${l.roleTextTransform==='none'?'selected':''}>Original (Name)</option>
       </select>
     </div>
@@ -706,7 +706,7 @@ function buildAnimation() {
   const a = config.animations;
   document.getElementById("animBody").innerHTML = `
     <div class="field">
-      <label class="field-label">Fade-In Dauer (Sekunden)</label>
+      <label class="field-label">Fade-In Duration (seconds)</label>
       <div class="slider-wrap">
         <input type="range" min="0" max="2" step="0.05" value="${a.fadeInDuration}" oninput="config.animations.fadeInDuration=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()">
         <span class="slider-val">${a.fadeInDuration}s</span>
@@ -719,14 +719,14 @@ function buildAnimation() {
       </select>
     </div>
     <div class="field">
-      <label class="field-label">Karten-Transparenz</label>
+      <label class="field-label">Card transparency</label>
       <div class="slider-wrap">
         <input type="range" min="0" max="1" step="0.05" value="${a.cardTransparency}" oninput="config.animations.cardTransparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
         <span class="slider-val">${a.cardTransparency}</span>
       </div>
     </div>
     <div class="field">
-      <label class="field-label">Rahmen-Transparenz</label>
+      <label class="field-label">Border transparency</label>
       <div class="slider-wrap">
         <input type="range" min="0" max="1" step="0.05" value="${a.borderTransparency}" oninput="config.animations.borderTransparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()">
         <span class="slider-val">${a.borderTransparency}</span>
@@ -741,16 +741,16 @@ function buildParticles() {
   const c = document.getElementById("particleBody");
   c.innerHTML = `
     <div class="toggle-wrap">
-      <span class="toggle-label">Partikel aktiviert</span>
+      <span class="toggle-label">Particles enabled</span>
       <div class="toggle ${p.enabled?'on':''}" onclick="config.particles.enabled=!config.particles.enabled; toggleSwitch(this); updatePreview()"><div class="toggle-knob"></div></div>
     </div>
-    <div class="field"><label class="field-label">Anzahl</label><div class="slider-wrap"><input type="range" min="0" max="12" step="1" value="${p.count}" oninput="config.particles.count=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.count}</span></div></div>
-    <div class="field"><label class="field-label">Min Größe (px)</label><div class="slider-wrap"><input type="range" min="1" max="10" step="1" value="${p.minSize}" oninput="config.particles.minSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.minSize}</span></div></div>
-    <div class="field"><label class="field-label">Max Größe (px)</label><div class="slider-wrap"><input type="range" min="1" max="20" step="1" value="${p.maxSize}" oninput="config.particles.maxSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.maxSize}</span></div></div>
-    <div class="field"><label class="field-label">Transparenz</label><div class="slider-wrap"><input type="range" min="0" max="1" step="0.05" value="${p.transparency}" oninput="config.particles.transparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.transparency}</span></div></div>
-    <div class="field"><label class="field-label">Bewegung Min (Sek)</label><div class="slider-wrap"><input type="range" min="0.5" max="10" step="0.5" value="${p.moveDurationMin}" oninput="config.particles.moveDurationMin=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()"><span class="slider-val">${p.moveDurationMin}s</span></div></div>
-    <div class="field"><label class="field-label">Bewegung Max (Sek)</label><div class="slider-wrap"><input type="range" min="1" max="15" step="0.5" value="${p.moveDurationMax}" oninput="config.particles.moveDurationMax=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()"><span class="slider-val">${p.moveDurationMax}s</span></div></div>
-    <div class="field"><label class="field-label">Farben</label><div id="particleColors"></div></div>
+    <div class="field"><label class="field-label">Count</label><div class="slider-wrap"><input type="range" min="0" max="12" step="1" value="${p.count}" oninput="config.particles.count=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.count}</span></div></div>
+    <div class="field"><label class="field-label">Min size (px)</label><div class="slider-wrap"><input type="range" min="1" max="10" step="1" value="${p.minSize}" oninput="config.particles.minSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.minSize}</span></div></div>
+    <div class="field"><label class="field-label">Max size (px)</label><div class="slider-wrap"><input type="range" min="1" max="20" step="1" value="${p.maxSize}" oninput="config.particles.maxSize=parseInt(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.maxSize}</span></div></div>
+    <div class="field"><label class="field-label">Transparency</label><div class="slider-wrap"><input type="range" min="0" max="1" step="0.05" value="${p.transparency}" oninput="config.particles.transparency=parseFloat(this.value); this.nextElementSibling.textContent=this.value; updatePreview()"><span class="slider-val">${p.transparency}</span></div></div>
+    <div class="field"><label class="field-label">Move duration min (sec)</label><div class="slider-wrap"><input type="range" min="0.5" max="10" step="0.5" value="${p.moveDurationMin}" oninput="config.particles.moveDurationMin=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()"><span class="slider-val">${p.moveDurationMin}s</span></div></div>
+    <div class="field"><label class="field-label">Move duration max (sec)</label><div class="slider-wrap"><input type="range" min="1" max="15" step="0.5" value="${p.moveDurationMax}" oninput="config.particles.moveDurationMax=parseFloat(this.value); this.nextElementSibling.textContent=this.value+'s'; updatePreview()"><span class="slider-val">${p.moveDurationMax}s</span></div></div>
+    <div class="field"><label class="field-label">Colors</label><div id="particleColors"></div></div>
   `;
   buildParticleColors();
 }
@@ -764,7 +764,7 @@ function buildParticleColors() {
       <input type="text" class="hex" value="${col}" onchange="config.particles.colors[${i}]=this.value; this.previousElementSibling.value=this.value; updatePreview()">
       <button class="btn-icon" onclick="config.particles.colors.splice(${i},1); buildParticleColors(); updatePreview()">✕</button>
     </div>
-  `).join("") + `<button class="btn-add" onclick="config.particles.colors.push('#FFFFFF'); buildParticleColors(); updatePreview()">+ Farbe hinzufügen</button>`;
+  `).join("") + `<button class="btn-add" onclick="config.particles.colors.push('#FFFFFF'); buildParticleColors(); updatePreview()">+ Add color</button>`;
 }
 
 // ── KEYWORDS + ROLE USERS ──
@@ -789,20 +789,20 @@ function buildKeywords() {
         </div>
         <div class="role-row-keywords">
           ${kws.map((kw,i) => `<span class="kw-tag">${kw} <span class="rm" onclick="removeKeyword('${t}',${i})">×</span></span>`).join("")}
-          ${kws.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">Keine Keywords</span>' : ''}
+          ${kws.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">No keywords</span>' : ''}
         </div>
         <div class="role-row-input">
-          <input type="text" class="input-text" id="kwInput_${t}" placeholder="Keyword hinzufügen..." onkeydown="if(event.key==='Enter'){addKeyword('${t}')}">
+          <input type="text" class="input-text" id="kwInput_${t}" placeholder="Add keyword..." onkeydown="if(event.key==='Enter'){addKeyword('${t}')}">
           <button class="btn-icon" onclick="addKeyword('${t}')">+</button>
         </div>
         <div class="role-row-divider"></div>
-        <div class="role-row-section-label">Direkt zugewiesene Usernames</div>
+        <div class="role-row-section-label">Directly assigned usernames</div>
         <div class="role-row-keywords">
           ${users.map((u,i) => `<span class="kw-tag kw-tag-user">${u} <span class="rm" onclick="removeUsername('${t}',${i})">×</span></span>`).join("")}
-          ${users.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">Keine User zugewiesen</span>' : ''}
+          ${users.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">No users assigned</span>' : ''}
         </div>
         <div class="role-row-input">
-          <input type="text" class="input-text" id="usrInput_${t}" placeholder="Roblox Username hinzufügen..." onkeydown="if(event.key==='Enter'){addUsername('${t}')}">
+          <input type="text" class="input-text" id="usrInput_${t}" placeholder="Add Roblox username..." onkeydown="if(event.key==='Enter'){addUsername('${t}')}">
           <button class="btn-icon" onclick="addUsername('${t}')">+</button>
         </div>
       </div>
@@ -816,18 +816,18 @@ function removeUsername(theme, idx) { config.roleUsers[theme].splice(idx, 1); bu
 
 // ── PROFILE PICTURES (DYNAMIC FIX) ──
 function buildProfilePictures() {
-  // Jetzt werden alle Themes ausgelesen und nicht nur "owner" und "user"
+  // Now all themes are read, not just "owner" and "user"
   const c = document.getElementById("profileBody");
   const pp = config.profilePictures || {};
   c.innerHTML = THEME_NAMES.map(role => `
     <div class="field" style="margin-bottom:24px; padding-bottom: 16px; border-bottom: 1px solid var(--line);">
-      <label class="field-label" style="color: var(--acc); font-size: 13px; text-transform: capitalize;">${role} Profilbild</label>
+      <label class="field-label" style="color: var(--acc); font-size: 13px; text-transform: capitalize;">${role} Profile Picture</label>
       <div class="field">
-        <label class="field-label">Bild URL</label>
+        <label class="field-label">Image URL</label>
         <input type="text" class="input-text" placeholder="https://..." value="${pp[role]?.url||''}" onchange="config.profilePictures['${role}']=config.profilePictures['${role}']||{}; config.profilePictures['${role}'].url=this.value; updatePreview()">
       </div>
       <div class="field">
-        <label class="field-label">Lokale Datei (Roblox Asset)</label>
+        <label class="field-label">Local file (Roblox Asset)</label>
         <input type="text" class="input-text" placeholder="rbxassetid://..." value="${pp[role]?.file||''}" onchange="config.profilePictures['${role}']=config.profilePictures['${role}']||{}; config.profilePictures['${role}'].file=this.value">
       </div>
     </div>
@@ -839,7 +839,7 @@ function buildAvatars() {
   const c = document.getElementById("avatarBody");
   const entries = Object.entries(config.customAvatars||{});
   let html = `<table class="avatar-table">
-    <thead><tr><th>Spieler</th><th>URL</th><th></th></tr></thead><tbody>`;
+    <thead><tr><th>Player</th><th>URL</th><th></th></tr></thead><tbody>`;
   entries.forEach(([name, av]) => {
     html += `<tr>
       <td><input type="text" class="input-text av-name" value="${name}"></td>
@@ -848,7 +848,7 @@ function buildAvatars() {
       <td><button class="btn-icon" onclick="delete config.customAvatars['${name}']; buildAvatars()">✕</button></td>
     </tr>`;
   });
-  html += `</tbody></table><button class="btn-add" onclick="addAvatar()">+ Speziellen Avatar hinzufügen</button>`;
+  html += `</tbody></table><button class="btn-add" onclick="addAvatar()">+ Add custom avatar</button>`;
   c.innerHTML = html;
 }
 function addAvatar() { config.customAvatars["NewUser_"+Math.floor(Math.random()*1000)] = { url:"", file:"", strokeStart:"#FFFFFF", strokeEnd:"#000000" }; buildAvatars(); }
@@ -920,7 +920,7 @@ function updatePreview() {
   const a = config.animations;
   const p = config.particles;
 
-  // Dynnamischer Name & Rolle aus den Input-Feldern!
+  // Dynamic name & role from input fields!
   const dynName = document.getElementById("prevName").value || "PlayerName";
   const dynRole = document.getElementById("prevRole").value || "ROLE";
 
@@ -949,7 +949,7 @@ function updatePreview() {
   const avInner = document.getElementById("ntAvInner");
   avInner.style.fontSize = l.initialsTextSize + "px";
   avInner.style.color = t.avatarText;
-  avInner.textContent = dynName.substring(0, 2).toUpperCase(); // Dynamische Initialen
+  avInner.textContent = dynName.substring(0, 2).toUpperCase(); // Dynamic initials
 
   const divider = document.getElementById("ntDivider");
   divider.style.width = l.dividerWidth + "px";
@@ -1005,29 +1005,29 @@ function updatePreview() {
 // ── EXPORT / IMPORT ──
 function exportJSON() {
   syncAvatarsFromDOM();
-  // Target User in Config übernehmen
+  // Apply target user to config
   config.targetUser = document.getElementById("targetUserInp").value.trim();
   document.getElementById("exportArea").value = JSON.stringify(config, null, 2);
   document.getElementById("exportModal").classList.add("open");
 }
-function copyExport() { navigator.clipboard.writeText(document.getElementById("exportArea").value).catch(()=>{}); toast("JSON in die Zwischenablage kopiert!"); closeModal("exportModal"); }
+function copyExport() { navigator.clipboard.writeText(document.getElementById("exportArea").value).catch(()=>{}); toast("JSON copied to clipboard!"); closeModal("exportModal"); }
 function downloadJSON() {
   const blob = new Blob([JSON.stringify(config, null, 2)], {type:"application/json"});
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = config.targetUser ? `NametagConfig_${config.targetUser}.json` : "NametagConfig_Global.json";
-  a.click(); toast("Datei heruntergeladen!");
+  a.click(); toast("File downloaded!");
 }
 function importJSON() { document.getElementById("importArea").value = ""; document.getElementById("importModal").classList.add("open"); }
 function doImport() {
   try {
     const data = JSON.parse(document.getElementById("importArea").value);
-    if(!data.version) throw new Error("Ungültiges Format (Keine Version)");
+    if(!data.version) throw new Error("Invalid format (No version)");
     config = data; init(); closeModal("importModal"); toast("Erfolgreich importiert!");
-  } catch(e) { toast("Fehler: " + e.message); }
+  } catch(e) { toast("Error: " + e.message); }
 }
 function resetDefaults() {
-  if(!confirm("Möchtest du wirklich alle Einstellungen zurücksetzen?")) return;
-  config = JSON.parse(JSON.stringify(DEFAULTS)); init(); toast("Auf Standard zurückgesetzt!");
+  if(!confirm("Do you really want to reset all settings?")) return;
+  config = JSON.parse(JSON.stringify(DEFAULTS)); init(); toast("Reset to defaults!");
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove("open"); }
@@ -1062,7 +1062,7 @@ async function checkPassword() {
   const pw = input.value;
 
   if (!pw) {
-    err.textContent = "Bitte Passwort eingeben";
+    err.textContent = "Please enter a password";
     err.classList.add("show");
     box.classList.add("pw-shake");
     setTimeout(() => box.classList.remove("pw-shake"), 400);
@@ -1076,14 +1076,14 @@ async function checkPassword() {
     input.value = "";
   } else {
     pwAttempts++;
-    err.textContent = "Falsches Passwort";
+    err.textContent = "Wrong password";
     err.classList.add("show");
     box.classList.add("pw-shake");
     input.value = "";
     input.focus();
     setTimeout(() => box.classList.remove("pw-shake"), 400);
     if (pwAttempts >= 10) {
-      err.textContent = "Zu viele Versuche. Bitte Seite neu laden.";
+      err.textContent = "Too many attempts. Please reload the page.";
       document.querySelector(".pw-btn").disabled = true;
     }
   }
