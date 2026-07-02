@@ -500,6 +500,8 @@ const DEFAULTS = {
   particles: { enabled:true, count:4, minSize:2, maxSize:4, transparency:0.5, moveDurationMin:3.0, moveDurationMax:5.0, colors:["#B87CFF","#A064F0","#C896FF","#8C50DC","#DDB8FF"] },
   roleKeywords: { owner:["owner","vip"], developer:["developer","entwickler"], moderator:["moderator","mod"], admin:["admin","administrator"], advertising:["advertising","werbung"] },
   roleUsers: { owner:[], admin:[], developer:[], moderator:[], advertising:[], user:[] },
+  roleLabels: {},
+  displayNames: {},
   gradients: {
     cardGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#1A1A22"], transparency:[0,0], rotation:90, offset:[0,0] },
     avatarGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#160E1E"], transparency:[0,0], rotation:180, offset:[0,0] },
@@ -836,10 +838,18 @@ function buildKeywords() {
         </div>
         <div class="role-row-divider"></div>
         <div class="role-row-section-label">Directly assigned usernames</div>
-        <div class="role-row-keywords">
-          ${users.map((u,i) => `<span class="kw-tag kw-tag-user">${u} <span class="rm" onclick="removeUsername('${t}',${i})">×</span></span>`).join("")}
-          ${users.length === 0 ? '<span style="font-size:11px; color:var(--t3); font-style:italic;">No users assigned</span>' : ''}
-        </div>
+        ${users.length === 0 ? '<div style="font-size:11px; color:var(--t3); font-style:italic; padding:4px 0;">No users assigned</div>' : ''}
+        ${users.map((u,i) => {
+          const dn = (config.displayNames || {})[u] || '';
+          const rl = (config.roleLabels || {})[u] || '';
+          return `
+          <div style="display:flex; gap:6px; align-items:center; margin-bottom:6px;">
+            <input type="text" class="input-text" value="${u}" readonly style="flex:0.8; padding:7px 8px; font-size:11px; opacity:0.6; cursor:default;">
+            <input type="text" class="input-text" value="${dn}" placeholder="Display Name" onchange="updateDisplayName('${u}',this.value)" onkeydown="if(event.key==='Enter'){updateDisplayName('${u}',this.value); this.blur();}" style="flex:1; padding:7px 8px; font-size:11px;" title="Custom name shown in nametag">
+            <input type="text" class="input-text" value="${rl}" placeholder="Role Label" onchange="updateRoleLabel('${u}',this.value)" onkeydown="if(event.key==='Enter'){updateRoleLabel('${u}',this.value); this.blur();}" style="flex:1; padding:7px 8px; font-size:11px;" title="Text shown under the name">
+            <button class="btn-icon" onclick="removeUsername('${t}',${i})" style="width:28px;height:28px;font-size:14px;">✕</button>
+          </div>`;
+        }).join('')}
         <div class="role-row-input">
           <input type="text" class="input-text" id="usrInput_${t}" placeholder="Add Roblox username..." onkeydown="if(event.key==='Enter'){addUsername('${t}')}">
           <button class="btn-icon" onclick="addUsername('${t}')">+</button>
@@ -882,7 +892,25 @@ function addUsername(theme) {
     if(last) last.classList.add("kw-tag-new");
   }, 10);
 }
-function removeUsername(theme, idx) { config.roleUsers[theme].splice(idx, 1); buildKeywords(); }
+function removeUsername(theme, idx) {
+  const username = config.roleUsers[theme][idx];
+  config.roleUsers[theme].splice(idx, 1);
+  if (config.roleLabels && config.roleLabels[username]) delete config.roleLabels[username];
+  if (config.displayNames && config.displayNames[username]) delete config.displayNames[username];
+  buildKeywords();
+}
+function updateDisplayName(username, name) {
+  if (!config.displayNames) config.displayNames = {};
+  const val = name.trim();
+  if (val === '') { delete config.displayNames[username]; }
+  else { config.displayNames[username] = val; }
+}
+function updateRoleLabel(username, label) {
+  if (!config.roleLabels) config.roleLabels = {};
+  const val = label.trim();
+  if (val === '') { delete config.roleLabels[username]; }
+  else { config.roleLabels[username] = val; }
+}
 
 // ── PROFILE PICTURES (DYNAMIC FIX) ──
 function buildProfilePictures() {
