@@ -502,6 +502,7 @@ const DEFAULTS = {
   roleUsers: { owner:[], admin:[], developer:[], moderator:[], advertising:[], user:[] },
   roleLabels: {},
   displayNames: {},
+  roleDisplayNames: {},
   gradients: {
     cardGradient:    { enabled:false, type:"Linear", colors:["#B87CFF","#1A1A22"], transparency:[0,0], rotation:90, offset:[0,0] },
     avatarGradient:  { enabled:false, type:"Linear", colors:["#B87CFF","#160E1E"], transparency:[0,0], rotation:180, offset:[0,0] },
@@ -590,7 +591,14 @@ function buildThemeTabs() {
   const c = document.getElementById("themeTabs");
   c.innerHTML = THEME_NAMES.map(t => `<div class="theme-tab ${t===activeTheme?'active':''}" onclick="switchTheme('${t}')">${t}</div>`).join("");
 }
-function switchTheme(t) { activeTheme = t; buildThemeTabs(); buildColorGrid(); buildPreviewThemeBtns(); updatePreview(); }
+const ROLE_DEFAULTS = { user:"TL User", admin:"TL Admin", owner:"TL Owner", developer:"TL Developer", advertising:"TL Advertising", moderator:"TL Moderator" };
+function switchTheme(t) {
+  activeTheme = t;
+  // Set preview role to roleDisplayNames default for this theme
+  const rdn = (config.roleDisplayNames || {})[t] || ROLE_DEFAULTS[t] || 'TL User';
+  document.getElementById("prevRole").value = rdn;
+  buildThemeTabs(); buildColorGrid(); buildPreviewThemeBtns(); updatePreview();
+}
 
 // ── COLOR GRID ──
 function buildColorGrid() {
@@ -817,6 +825,8 @@ function buildKeywords() {
     const kws = config.roleKeywords[t] || [];
     const users = config.roleUsers[t] || [];
     const color = ROLE_COLORS[t] || "#888";
+    const rdn = (config.roleDisplayNames || {})[t] || '';
+    const defaultLabel = ROLE_DEFAULTS[t] || t;
     return `
     <div class="role-row">
       <div class="role-row-accent" style="background: ${color};"></div>
@@ -827,6 +837,14 @@ function buildKeywords() {
             ${t}
           </div>
           <span class="role-row-count">${kws.length} Keyword${kws.length !== 1 ? 's' : ''} · ${users.length} User</span>
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label class="field-label" style="font-size:10px;">Role Label (shown under name)</label>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <input type="text" class="input-text" value="${rdn}" placeholder="${defaultLabel}" onchange="updateRoleDisplayName('${t}',this.value)" onkeydown="if(event.key==='Enter'){updateRoleDisplayName('${t}',this.value); this.blur();}" style="flex:1; padding:7px 8px; font-size:11px;" title="Default label for this role (e.g. TL Admin)">
+            <button class="btn-icon" onclick="deleteRoleDisplayName('${t}')" style="width:28px;height:28px;font-size:12px;background:rgba(255,255,255,0.05);color:var(--t3);border-color:var(--line2);" title="Reset to default">↺</button>
+          </div>
+          <div style="font-size:10px; color:var(--t3); margin-top:4px;">Default: "${defaultLabel}"</div>
         </div>
         <div class="role-row-keywords">
           ${kws.map((kw,i) => `<span class="kw-tag">${kw} <span class="rm" onclick="removeKeyword('${t}',${i})">×</span></span>`).join("")}
@@ -904,12 +922,43 @@ function updateDisplayName(username, name) {
   const val = name.trim();
   if (val === '') { delete config.displayNames[username]; }
   else { config.displayNames[username] = val; }
+  // Update live preview if username matches preview name
+  const prevName = document.getElementById("prevName").value;
+  if (prevName && prevName.toLowerCase() === username.toLowerCase()) {
+    document.getElementById("prevName").value = val || username;
+    updatePreview();
+  }
 }
 function updateRoleLabel(username, label) {
   if (!config.roleLabels) config.roleLabels = {};
   const val = label.trim();
   if (val === '') { delete config.roleLabels[username]; }
   else { config.roleLabels[username] = val; }
+  // Update live preview if username matches preview name
+  const prevName = document.getElementById("prevName").value;
+  if (prevName && prevName.toLowerCase() === username.toLowerCase()) {
+    document.getElementById("prevRole").value = val || ROLE_DEFAULTS[activeTheme] || 'TL User';
+    updatePreview();
+  }
+}
+function updateRoleDisplayName(role, label) {
+  if (!config.roleDisplayNames) config.roleDisplayNames = {};
+  const val = label.trim();
+  if (val === '') { delete config.roleDisplayNames[role]; }
+  else { config.roleDisplayNames[role] = val; }
+  // Update live preview if editing the current theme
+  if (role === activeTheme) {
+    document.getElementById("prevRole").value = val || ROLE_DEFAULTS[role] || 'TL User';
+    updatePreview();
+  }
+}
+function deleteRoleDisplayName(role) {
+  if (config.roleDisplayNames && config.roleDisplayNames[role]) delete config.roleDisplayNames[role];
+  if (role === activeTheme) {
+    document.getElementById("prevRole").value = ROLE_DEFAULTS[role] || 'TL User';
+    updatePreview();
+  }
+  buildKeywords();
 }
 
 // ── PROFILE PICTURES (DYNAMIC FIX) ──
