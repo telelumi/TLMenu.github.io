@@ -174,15 +174,15 @@
     ]
   },
   "roleUsers": {
-    "owner": [
-      "craterzamethyst"
-    ],
+    "owner": [],
     "admin": [],
     "developer": [],
     "moderator": [],
     "advertising": [],
     "user": []
   },
+  "roleLabels": {},
+  "displayNames": {},
   "gradients": {
     "cardGradient": {
       "enabled": false,
